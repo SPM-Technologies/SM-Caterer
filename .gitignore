@@ -1,0 +1,40 @@
+# Compiled class files
+*.class
+target/
+*.jar
+*.war
+*.ear
+
+# Log files
+*.log
+*.log.*
+build.log
+run.log
+full-run.log
+final-run.log
+app-start.log
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# Spring Boot
+spring-boot-*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.backup
+pom.xml.backup
+
+# Test output
+test-output/
