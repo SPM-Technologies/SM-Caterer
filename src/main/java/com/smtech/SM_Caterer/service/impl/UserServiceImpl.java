@@ -90,7 +90,8 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserDTO, Long>
         }
 
         User savedUser = userRepository.save(user);
-        log.info("User created: {} (ID: {})", savedUser.getUsername(), savedUser.getId());
+        log.info("User created (ID: {})", savedUser.getId());
+        log.debug("User created: {} (ID: {})", savedUser.getUsername(), savedUser.getId());
 
         return userMapper.toDto(savedUser);
     }
@@ -140,7 +141,8 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserDTO, Long>
         }
 
         User updatedUser = userRepository.save(existingUser);
-        log.info("User updated: {} (ID: {})", updatedUser.getUsername(), updatedUser.getId());
+        log.info("User updated (ID: {})", updatedUser.getId());
+        log.debug("User updated: {} (ID: {})", updatedUser.getUsername(), updatedUser.getId());
 
         return userMapper.toDto(updatedUser);
     }
@@ -191,7 +193,8 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserDTO, Long>
         user.setPasswordChangedAt(LocalDateTime.now());
         userRepository.save(user);
 
-        log.info("Password changed for user: {}", user.getUsername());
+        log.info("Password changed for user ID: {}", userId);
+        log.debug("Password changed for user: {}", user.getUsername());
     }
 
     @Override
@@ -220,7 +223,8 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserDTO, Long>
         // Lock account after 5 failed attempts
         if (user.getFailedLoginAttempts() >= 5) {
             user.setStatus(UserStatus.LOCKED);
-            log.warn("User account locked due to failed login attempts: {}", user.getUsername());
+            log.warn("User account locked due to failed login attempts (ID: {})", userId);
+            log.debug("User account locked: {}", user.getUsername());
         }
 
         userRepository.save(user);
@@ -238,6 +242,7 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserDTO, Long>
         user.setFailedLoginAttempts(0);
         userRepository.save(user);
 
-        log.info("User account unlocked: {}", user.getUsername());
+        log.info("User account unlocked (ID: {})", userId);
+        log.debug("User account unlocked: {}", user.getUsername());
     }
 }

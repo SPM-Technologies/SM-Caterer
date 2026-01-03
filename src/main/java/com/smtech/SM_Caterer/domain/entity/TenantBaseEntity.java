@@ -4,13 +4,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 /**
  * Base entity for all tenant-specific entities.
  *
  * Provides:
  * - Automatic tenant reference
- * - Tenant isolation support
+ * - Tenant isolation support via Hibernate Filter
  *
  * All tenant-specific entities MUST extend this class.
  *
@@ -20,6 +23,9 @@ import lombok.experimental.SuperBuilder;
  * Not used by:
  * - Tenant entity itself
  * - Translation entities (they reference parent, not tenant directly)
+ *
+ * Phase 2: Added Hibernate Filter for automatic tenant isolation.
+ * The filter is enabled in TenantContextFilter for each request.
  */
 @Getter
 @Setter
@@ -27,6 +33,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @MappedSuperclass
+@FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = Long.class))
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 public abstract class TenantBaseEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
