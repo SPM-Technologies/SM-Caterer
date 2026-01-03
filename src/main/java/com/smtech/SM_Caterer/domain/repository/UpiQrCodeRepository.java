@@ -1,6 +1,7 @@
 package com.smtech.SM_Caterer.domain.repository;
 
 import com.smtech.SM_Caterer.domain.entity.UpiQrCode;
+import com.smtech.SM_Caterer.domain.enums.UpiQrCodeStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -30,13 +31,6 @@ public interface UpiQrCodeRepository extends BaseRepository<UpiQrCode, Long> {
     Optional<UpiQrCode> findByUpiId(String upiId);
 
     /**
-     * Finds active UPI QR code for tenant.
-     * @param tenantId Tenant ID
-     * @return UpiQrCode if found
-     */
-    Optional<UpiQrCode> findByTenantIdAndIsActiveTrue(Long tenantId);
-
-    /**
      * Finds all UPI QR codes for tenant.
      * @param tenantId Tenant ID
      * @return List of UPI QR codes
@@ -52,20 +46,12 @@ public interface UpiQrCodeRepository extends BaseRepository<UpiQrCode, Long> {
     Page<UpiQrCode> findByTenantId(Long tenantId, Pageable pageable);
 
     /**
-     * Finds active UPI QR codes for tenant.
+     * Finds UPI QR codes by tenant and status.
      * @param tenantId Tenant ID
-     * @param isActive Active status
+     * @param status QR code status
      * @return List of UPI QR codes
      */
-    List<UpiQrCode> findByTenantIdAndIsActive(Long tenantId, Boolean isActive);
-
-    /**
-     * Finds primary UPI QR code for tenant.
-     * @param tenantId Tenant ID
-     * @param isPrimary Primary status
-     * @return UpiQrCode if found
-     */
-    Optional<UpiQrCode> findByTenantIdAndIsPrimary(Long tenantId, Boolean isPrimary);
+    List<UpiQrCode> findByTenantIdAndStatus(Long tenantId, UpiQrCodeStatus status);
 
     /**
      * Checks if UPI ID exists for tenant.
@@ -81,7 +67,7 @@ public interface UpiQrCodeRepository extends BaseRepository<UpiQrCode, Long> {
     long countByTenantId(Long tenantId);
 
     /**
-     * Counts active UPI QR codes by tenant.
+     * Counts UPI QR codes by tenant and status.
      */
-    long countByTenantIdAndIsActive(Long tenantId, Boolean isActive);
+    long countByTenantIdAndStatus(Long tenantId, UpiQrCodeStatus status);
 }

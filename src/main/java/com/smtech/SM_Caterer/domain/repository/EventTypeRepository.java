@@ -25,14 +25,6 @@ public interface EventTypeRepository extends BaseRepository<EventType, Long> {
     Optional<EventType> findByTenantIdAndEventCode(Long tenantId, String eventCode);
 
     /**
-     * Finds event type by tenant and event type code.
-     * @param tenantId Tenant ID
-     * @param eventTypeCode Event type code
-     * @return EventType if found
-     */
-    Optional<EventType> findByTenantIdAndEventTypeCode(Long tenantId, String eventTypeCode);
-
-    /**
      * Finds all event types for tenant with translations loaded.
      * Uses EntityGraph to prevent N+1 queries.
      */
@@ -60,14 +52,6 @@ public interface EventTypeRepository extends BaseRepository<EventType, Long> {
      * @return true if exists
      */
     boolean existsByTenantIdAndEventCode(Long tenantId, String eventCode);
-
-    /**
-     * Checks if event type code exists for tenant.
-     * @param tenantId Tenant ID
-     * @param eventTypeCode Event type code
-     * @return true if exists
-     */
-    boolean existsByTenantIdAndEventTypeCode(Long tenantId, String eventTypeCode);
 
     /**
      * Counts event types by tenant.

@@ -54,8 +54,8 @@ public class EventTypeServiceImpl extends BaseServiceImpl<EventType, EventTypeDT
     public EventTypeDTO create(EventTypeDTO dto) {
         log.debug("Creating new event type: {}", dto.getEventTypeCode());
 
-        // Validate unique constraint
-        if (eventTypeRepository.existsByTenantIdAndEventTypeCode(dto.getTenantId(), dto.getEventTypeCode())) {
+        // Validate unique constraint (entity field is eventCode, DTO field is eventTypeCode)
+        if (eventTypeRepository.existsByTenantIdAndEventCode(dto.getTenantId(), dto.getEventTypeCode())) {
             throw new DuplicateResourceException("EventType", "eventTypeCode", dto.getEventTypeCode());
         }
 
@@ -77,7 +77,7 @@ public class EventTypeServiceImpl extends BaseServiceImpl<EventType, EventTypeDT
     @Override
     @Transactional(readOnly = true)
     public Optional<EventTypeDTO> findByTenantIdAndEventTypeCode(Long tenantId, String eventTypeCode) {
-        return eventTypeRepository.findByTenantIdAndEventTypeCode(tenantId, eventTypeCode)
+        return eventTypeRepository.findByTenantIdAndEventCode(tenantId, eventTypeCode)
                 .map(eventTypeMapper::toDto);
     }
 
