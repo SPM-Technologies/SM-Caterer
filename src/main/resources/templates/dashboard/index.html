@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{dashboard.title}">Dashboard</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0"><i class="bi bi-speedometer2"></i> <span th:text="#{dashboard.title}">Dashboard</span></h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item active" th:text="#{dashboard.title}">Dashboard</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <span class="text-muted" th:text="#{dashboard.welcome}">Welcome,</span>
+            <strong sec:authentication="principal.fullName">User</strong>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded">
+                                <i class="bi bi-box-seam text-primary fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1" th:text="#{dashboard.materials}">Materials</h6>
+                            <h3 class="mb-0" th:text="${stats?.materialsCount ?: 0}">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 p-3 rounded">
+                                <i class="bi bi-card-list text-success fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1" th:text="#{dashboard.menus}">Menus</h6>
+                            <h3 class="mb-0" th:text="${stats?.menusCount ?: 0}">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 p-3 rounded">
+                                <i class="bi bi-calendar-event text-warning fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1" th:text="#{dashboard.eventTypes}">Event Types</h6>
+                            <h3 class="mb-0" th:text="${stats?.eventTypesCount ?: 0}">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-info bg-opacity-10 p-3 rounded">
+                                <i class="bi bi-rulers text-info fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1" th:text="#{dashboard.units}">Units</h6>
+                            <h3 class="mb-0" th:text="${stats?.unitsCount ?: 0}">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-4" sec:authorize="hasAnyRole('SUPER_ADMIN', 'TENANT_ADMIN', 'MANAGER')">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-lightning"></i> <span th:text="#{dashboard.quickActions}">Quick Actions</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4 col-lg-2">
+                            <a th:href="@{/masters/units/new}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-plus-circle"></i><br>
+                                <small th:text="#{dashboard.addUnit}">Add Unit</small>
+                            </a>
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <a th:href="@{/masters/materials/new}" class="btn btn-outline-success w-100">
+                                <i class="bi bi-plus-circle"></i><br>
+                                <small th:text="#{dashboard.addMaterial}">Add Material</small>
+                            </a>
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <a th:href="@{/masters/menus/new}" class="btn btn-outline-warning w-100">
+                                <i class="bi bi-plus-circle"></i><br>
+                                <small th:text="#{dashboard.addMenu}">Add Menu</small>
+                            </a>
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <a th:href="@{/masters/event-types/new}" class="btn btn-outline-info w-100">
+                                <i class="bi bi-plus-circle"></i><br>
+                                <small th:text="#{dashboard.addEventType}">Add Event Type</small>
+                            </a>
+                        </div>
+                        <div class="col-md-4 col-lg-2">
+                            <a th:href="@{/masters/units}" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-list"></i><br>
+                                <small th:text="#{dashboard.viewAll}">View All Masters</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity (Placeholder) -->
+    <div class="row g-4 mt-2">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-clock-history"></i> <span th:text="#{dashboard.recentActivity}">Recent Activity</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center text-muted py-5">
+                        <i class="bi bi-inbox fs-1"></i>
+                        <p class="mt-2" th:text="#{dashboard.noActivity}">No recent activity to display</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person-badge"></i> <span th:text="#{dashboard.accountInfo}">Account Info</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted" th:text="#{dashboard.username}">Username</span>
+                            <strong sec:authentication="principal.username">-</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted" th:text="#{dashboard.role}">Role</span>
+                            <span class="badge bg-primary" sec:authentication="principal.role">-</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted" th:text="#{dashboard.tenant}">Tenant</span>
+                            <strong sec:authentication="principal.tenantCode">-</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

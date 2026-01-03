@@ -31,7 +31,10 @@ public class RecipeItemDTO extends BaseDTO {
 
     @NotNull(message = "Quantity is required")
     @DecimalMin(value = "0.01", message = "Quantity must be greater than zero")
-    private BigDecimal quantity;
+    private BigDecimal quantityRequired;
+
+    private String materialName;
+    private String unitCode;
 
     private String notes;
 }

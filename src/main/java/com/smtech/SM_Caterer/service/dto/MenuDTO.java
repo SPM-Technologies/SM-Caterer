@@ -1,9 +1,11 @@
 package com.smtech.SM_Caterer.service.dto;
 
+import com.smtech.SM_Caterer.domain.enums.MenuCategory;
 import com.smtech.SM_Caterer.domain.enums.Status;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,8 +32,11 @@ public class MenuDTO extends BaseDTO {
     @Size(max = 50, message = "Menu code must not exceed 50 characters")
     private String menuCode;
 
-    @DecimalMin(value = "0.00", message = "Price per person must be non-negative")
-    private BigDecimal pricePerPerson;
+    @NotNull(message = "Category is required")
+    private MenuCategory category;
+
+    @DecimalMin(value = "0.00", message = "Cost per serve must be non-negative")
+    private BigDecimal costPerServe;
 
     @Min(value = 1, message = "Serves count must be at least 1")
     private Integer servesCount;

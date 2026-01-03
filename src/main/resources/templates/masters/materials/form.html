@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="${isEdit} ? #{materials.edit} : #{materials.add}">Material Form</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-box-seam"></i>
+                <span th:text="${isEdit} ? #{materials.edit} : #{materials.add}">Material Form</span>
+            </h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}" th:text="#{nav.dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/masters/materials}" th:text="#{materials.title}">Materials</a></li>
+                    <li class="breadcrumb-item active" th:text="${isEdit} ? #{materials.edit} : #{materials.add}">Form</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <form th:action="${isEdit} ? @{/masters/materials/{id}(id=${material.id})} : @{/masters/materials}"
+                  th:object="${material}" method="post" class="needs-validation" novalidate>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="materialCode" class="form-label required" th:text="#{materials.materialCode}">Material Code</label>
+                            <input type="text" class="form-control" id="materialCode" th:field="*{materialCode}"
+                                   th:placeholder="#{materials.materialCode.placeholder}" required maxlength="50"
+                                   th:classappend="${#fields.hasErrors('materialCode')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('materialCode')}" th:errors="*{materialCode}">
+                                Error message
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="unitId" class="form-label required" th:text="#{materials.unit}">Unit</label>
+                            <select class="form-select" id="unitId" th:field="*{unitId}" required
+                                    th:classappend="${#fields.hasErrors('unitId')} ? 'is-invalid' : ''">
+                                <option value="" th:text="#{materials.unit.select}">Select Unit</option>
+                                <option th:each="unit : ${units}" th:value="${unit.id}" th:text="${unit.unitCode}">Unit</option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('unitId')}" th:errors="*{unitId}">
+                                Error message
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="minimumStock" class="form-label" th:text="#{materials.minStock}">Min Stock</label>
+                            <input type="number" class="form-control" id="minimumStock" th:field="*{minimumStock}"
+                                   min="0" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="currentStock" class="form-label" th:text="#{materials.currentStock}">Current Stock</label>
+                            <input type="number" class="form-control" id="currentStock" th:field="*{currentStock}"
+                                   min="0" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="costPerUnit" class="form-label" th:text="#{materials.costPerUnit}">Cost Per Unit</label>
+                            <input type="number" class="form-control" id="costPerUnit" th:field="*{costPerUnit}"
+                                   min="0" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="status" class="form-label" th:text="#{masters.status}">Status</label>
+                            <select class="form-select" id="status" th:field="*{status}">
+                                <option value="ACTIVE" th:text="#{masters.active}">Active</option>
+                                <option value="INACTIVE" th:text="#{masters.inactive}">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between">
+                    <a th:href="@{/masters/materials}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> <span th:text="#{masters.back}">Back to List</span>
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> <span th:text="#{masters.save}">Save</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+</th:block>
+</body>
+</html>

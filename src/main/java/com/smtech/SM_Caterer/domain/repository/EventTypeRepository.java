@@ -62,4 +62,9 @@ public interface EventTypeRepository extends BaseRepository<EventType, Long> {
      * Counts event types by tenant and status.
      */
     long countByTenantIdAndStatus(Long tenantId, Status status);
+
+    /**
+     * Finds event type by ID and tenant ID (tenant isolation).
+     */
+    Optional<EventType> findByIdAndTenantId(Long id, Long tenantId);
 }

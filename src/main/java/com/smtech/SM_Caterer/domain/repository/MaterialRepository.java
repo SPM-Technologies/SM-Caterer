@@ -79,4 +79,9 @@ public interface MaterialRepository extends BaseRepository<Material, Long> {
      * Counts materials by tenant and status.
      */
     long countByTenantIdAndStatus(Long tenantId, Status status);
+
+    /**
+     * Finds material by ID and tenant ID (tenant isolation).
+     */
+    Optional<Material> findByIdAndTenantId(Long id, Long tenantId);
 }

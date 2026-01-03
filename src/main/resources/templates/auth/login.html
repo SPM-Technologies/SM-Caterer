@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{login.title}">Login - SM-Caterer</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            overflow: hidden;
+            max-width: 400px;
+            width: 100%;
+        }
+        .login-header {
+            background: #0d6efd;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .login-header i {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .login-body {
+            padding: 40px;
+        }
+        .form-floating > label {
+            color: #6c757d;
+        }
+        .btn-login {
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <div class="dropdown">
+            <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-globe"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" th:href="@{/login(lang='en')}">English</a></li>
+                <li><a class="dropdown-item" th:href="@{/login(lang='hi')}">हिंदी</a></li>
+                <li><a class="dropdown-item" th:href="@{/login(lang='mr')}">मराठी</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="login-card">
+        <div class="login-header">
+            <i class="bi bi-shop"></i>
+            <h2 class="mb-0">SM-Caterer</h2>
+            <p class="mb-0 mt-2 opacity-75" th:text="#{login.subtitle}">Catering Management System</p>
+        </div>
+
+        <div class="login-body">
+            <!-- Error Messages -->
+            <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span th:text="#{login.error}">Invalid username or password</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Logout Message -->
+            <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle"></i>
+                <span th:text="#{login.logoutSuccess}">You have been logged out successfully</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Session Expired Message -->
+            <div th:if="${param.expired}" class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="bi bi-clock-history"></i>
+                <span th:text="#{login.sessionExpired}">Your session has expired. Please login again.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Login Form -->
+            <form th:action="@{/login}" method="post">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="username" name="username"
+                           placeholder="Username" required autofocus>
+                    <label for="username"><i class="bi bi-person"></i> <span th:text="#{login.username}">Username</span></label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="password" name="password"
+                           placeholder="Password" required>
+                    <label for="password"><i class="bi bi-lock"></i> <span th:text="#{login.password}">Password</span></label>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="remember-me" name="remember-me">
+                        <label class="form-check-label" for="remember-me" th:text="#{login.rememberMe}">Remember me</label>
+                    </div>
+                    <a href="#" class="text-decoration-none small" th:text="#{login.forgotPassword}">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-login w-100">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <span th:text="#{login.submit}">Sign In</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -17,11 +17,15 @@ public interface RecipeItemMapper extends EntityMapper<RecipeItemDTO, RecipeItem
     @Mapping(target = "menuCode", source = "menu.menuCode")
     @Mapping(target = "materialId", source = "material.id")
     @Mapping(target = "materialCode", source = "material.materialCode")
+    @Mapping(target = "quantityRequired", source = "quantityRequired")
+    @Mapping(target = "materialName", ignore = true)
+    @Mapping(target = "unitCode", source = "material.unit.unitCode")
     @Override
     RecipeItemDTO toDto(RecipeItem entity);
 
     @Mapping(target = "menu", ignore = true)
     @Mapping(target = "material", ignore = true)
+    @Mapping(target = "quantityRequired", source = "quantityRequired")
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

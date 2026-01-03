@@ -167,6 +167,29 @@
 		</dependency>
 
 		<!-- ============================================ -->
+		<!-- PHASE 3: THYMELEAF & WEB UI DEPENDENCIES -->
+		<!-- ============================================ -->
+
+		<!-- Thymeleaf Template Engine -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
+		<!-- Thymeleaf Layout Dialect -->
+		<dependency>
+			<groupId>nz.net.ultraq.thymeleaf</groupId>
+			<artifactId>thymeleaf-layout-dialect</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+
+		<!-- Thymeleaf Spring Security Integration -->
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
+		</dependency>
+
+		<!-- ============================================ -->
 		<!-- TEST DEPENDENCIES -->
 		<!-- ============================================ -->
 

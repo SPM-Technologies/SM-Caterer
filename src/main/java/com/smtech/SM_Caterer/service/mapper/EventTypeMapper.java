@@ -14,11 +14,13 @@ import org.mapstruct.*;
 public interface EventTypeMapper extends EntityMapper<EventTypeDTO, EventType> {
 
     @Mapping(target = "tenantId", source = "tenant.id")
+    @Mapping(target = "eventTypeCode", source = "eventCode")
     @Override
     EventTypeDTO toDto(EventType entity);
 
     @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "translations", ignore = true)
+    @Mapping(target = "eventCode", source = "eventTypeCode")
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

@@ -79,4 +79,9 @@ public interface MenuRepository extends BaseRepository<Menu, Long> {
      * Counts menus by tenant and status.
      */
     long countByTenantIdAndStatus(Long tenantId, Status status);
+
+    /**
+     * Finds menu by ID and tenant ID (tenant isolation).
+     */
+    Optional<Menu> findByIdAndTenantId(Long id, Long tenantId);
 }

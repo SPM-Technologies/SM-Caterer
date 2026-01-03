@@ -62,4 +62,9 @@ public interface UnitRepository extends BaseRepository<Unit, Long> {
      * Counts units by tenant and status.
      */
     long countByTenantIdAndStatus(Long tenantId, Status status);
+
+    /**
+     * Finds unit by ID and tenant ID (tenant isolation).
+     */
+    Optional<Unit> findByIdAndTenantId(Long id, Long tenantId);
 }

@@ -14,6 +14,8 @@ import org.mapstruct.*;
 public interface MenuMapper extends EntityMapper<MenuDTO, Menu> {
 
     @Mapping(target = "tenantId", source = "tenant.id")
+    @Mapping(target = "category", source = "category")
+    @Mapping(target = "costPerServe", source = "costPerServe")
     @Override
     MenuDTO toDto(Menu entity);
 

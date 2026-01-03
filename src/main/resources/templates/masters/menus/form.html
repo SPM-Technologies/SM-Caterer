@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="${isEdit} ? #{menus.edit} : #{menus.add}">Menu Form</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-card-list"></i>
+                <span th:text="${isEdit} ? #{menus.edit} : #{menus.add}">Menu Form</span>
+            </h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}" th:text="#{nav.dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/masters/menus}" th:text="#{menus.title}">Menus</a></li>
+                    <li class="breadcrumb-item active" th:text="${isEdit} ? #{menus.edit} : #{menus.add}">Form</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <form th:action="${isEdit} ? @{/masters/menus/{id}(id=${menu.id})} : @{/masters/menus}"
+                  th:object="${menu}" method="post" class="needs-validation" novalidate>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="menuCode" class="form-label required" th:text="#{menus.menuCode}">Menu Code</label>
+                            <input type="text" class="form-control" id="menuCode" th:field="*{menuCode}"
+                                   th:placeholder="#{menus.menuCode.placeholder}" required maxlength="50"
+                                   th:classappend="${#fields.hasErrors('menuCode')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('menuCode')}" th:errors="*{menuCode}">
+                                Error message
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="category" class="form-label required" th:text="#{menus.category}">Category</label>
+                            <select class="form-select" id="category" th:field="*{category}" required
+                                    th:classappend="${#fields.hasErrors('category')} ? 'is-invalid' : ''">
+                                <option value="" th:text="#{menus.category.select}">Select Category</option>
+                                <option th:each="cat : ${categories}" th:value="${cat.name()}"
+                                        th:text="#{|menus.category.${cat.name()}|}">Category</option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('category')}" th:errors="*{category}">
+                                Error message
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="costPerServe" class="form-label" th:text="#{menus.costPerServe}">Cost Per Serve</label>
+                            <input type="number" class="form-control" id="costPerServe" th:field="*{costPerServe}"
+                                   min="0" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="servesCount" class="form-label" th:text="#{menus.servesCount}">Serves Count</label>
+                            <input type="number" class="form-control" id="servesCount" th:field="*{servesCount}"
+                                   min="1" step="1">
+                            <div class="form-text" th:text="#{menus.servesCount.help}">Number of people this menu serves</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="status" class="form-label" th:text="#{masters.status}">Status</label>
+                            <select class="form-select" id="status" th:field="*{status}">
+                                <option value="ACTIVE" th:text="#{masters.active}">Active</option>
+                                <option value="INACTIVE" th:text="#{masters.inactive}">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between">
+                    <a th:href="@{/masters/menus}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> <span th:text="#{masters.back}">Back to List</span>
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> <span th:text="#{masters.save}">Save</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+</th:block>
+</body>
+</html>
