@@ -10,22 +10,22 @@ pipeline {
         
         stage('Checkout') {
             steps {
-                echo '📥 Checking out code from GitHub...'
+                echo 'Checking out code from GitHub...'
                 checkout scm
             }
         }
 
         stage('Build') {
             steps {
-                echo '🔨 Compiling the project...'
-                sh 'mvn clean compile'
+                echo 'Compiling the project...'
+                bat 'mvn clean compile'
             }
         }
 
         stage('Test') {
             steps {
-                echo '🧪 Running tests...'
-                sh 'mvn test'
+                echo 'Running tests...'
+                bat 'mvn test'
             }
             post {
                 always {
@@ -36,15 +36,15 @@ pipeline {
 
         stage('Code Coverage') {
             steps {
-                echo '📊 Generating coverage report...'
-                sh 'mvn jacoco:report'
+                echo 'Generating coverage report...'
+                bat 'mvn jacoco:report'
             }
         }
 
         stage('Package') {
             steps {
-                echo '📦 Creating WAR file...'
-                sh 'mvn package -DskipTests'
+                echo 'Creating WAR file...'
+                bat 'mvn package -DskipTests'
             }
             post {
                 success {
@@ -55,7 +55,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo '🚀 Ready to deploy!'
+                echo 'Ready to deploy!'
                 echo 'WAR file location: target/SM-Caterer-0.0.1-SNAPSHOT.war'
                 // Add your deployment commands here later
             }
@@ -64,10 +64,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Build Successful!'
+            echo 'Build Successful!'
         }
         failure {
-            echo '❌ Build Failed!'
+            echo 'Build Failed!'
         }
     }
 }
