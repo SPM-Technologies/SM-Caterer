@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{customers.title}">Customers</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-people"></i> <span th:text="#{customers.list}">Customer List</span></h2>
+        <a th:href="@{/customers/new}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> <span th:text="#{customers.add}">Add Customer</span>
+        </a>
+    </div>
+
+    <!-- Search -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:action="@{/customers}" method="get" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" name="search" th:value="${search}"
+                           th:placeholder="#{masters.search}">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="bi bi-search"></i> <span th:text="#{common.search}">Search</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Customer Table -->
+    <div class="card">
+        <div class="card-body">
+            <div th:if="${#lists.isEmpty(customers)}" class="text-center py-5 text-muted">
+                <i class="bi bi-people" style="font-size: 3rem;"></i>
+                <p class="mt-3" th:text="#{customers.noCustomers}">No customers found</p>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(customers)}" class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                    <tr>
+                        <th th:text="#{customers.code}">Code</th>
+                        <th th:text="#{customers.name}">Name</th>
+                        <th th:text="#{customers.phone}">Phone</th>
+                        <th th:text="#{customers.email}">Email</th>
+                        <th th:text="#{customers.city}">City</th>
+                        <th th:text="#{masters.status}">Status</th>
+                        <th th:text="#{masters.actions}">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="customer : ${customers}">
+                        <td th:text="${customer.customerCode}">CUST-001</td>
+                        <td>
+                            <a th:href="@{/customers/{id}(id=${customer.id})}" th:text="${customer.name}">John Doe</a>
+                        </td>
+                        <td th:text="${customer.phone}">9876543210</td>
+                        <td th:text="${customer.email ?: '-'}">email@example.com</td>
+                        <td th:text="${customer.city ?: '-'}">City</td>
+                        <td>
+                            <span class="badge" th:classappend="${customer.status.name() == 'ACTIVE'} ? 'bg-success' : 'bg-secondary'"
+                                  th:text="${customer.status}">Active</span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a th:href="@{/customers/{id}(id=${customer.id})}" class="btn btn-outline-info" th:title="#{common.view}">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a th:href="@{/customers/{id}/edit(id=${customer.id})}" class="btn btn-outline-primary" th:title="#{masters.edit}">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form th:action="@{/customers/{id}/delete(id=${customer.id})}" method="post" class="d-inline"
+                                      onsubmit="return confirm('Are you sure you want to delete this customer?');">
+                                    <button type="submit" class="btn btn-outline-danger" th:title="#{masters.delete}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <nav th:if="${totalPages > 1}" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link" th:href="@{/customers(page=0, size=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir})}">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link" th:href="@{/customers(page=${currentPage - 1}, size=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir})}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link" th:text="${currentPage + 1} + ' / ' + ${totalPages}">1 / 10</span>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                        <a class="page-link" th:href="@{/customers(page=${currentPage + 1}, size=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir})}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                        <a class="page-link" th:href="@{/customers(page=${totalPages - 1}, size=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir})}">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+</body>
+</html>

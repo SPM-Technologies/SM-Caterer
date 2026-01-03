@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="${isEdit} ? #{customers.edit} : #{customers.add}">Customer Form</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-person"></i>
+            <span th:if="${!isEdit}" th:text="#{customers.add}">Add Customer</span>
+            <span th:if="${isEdit}" th:text="#{customers.edit}">Edit Customer</span>
+        </h2>
+        <a th:href="@{/customers}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> <span th:text="#{masters.back}">Back to List</span>
+        </a>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card">
+        <div class="card-body">
+            <form th:action="${isEdit} ? @{/customers/{id}(id=${customer.id})} : @{/customers}"
+                  th:object="${customer}" method="post">
+
+                <div class="row">
+                    <!-- Customer Code -->
+                    <div class="col-md-6 mb-3">
+                        <label for="customerCode" class="form-label" th:text="#{customers.code}">Code</label>
+                        <input type="text" class="form-control" id="customerCode" th:field="*{customerCode}"
+                               th:classappend="${#fields.hasErrors('customerCode')} ? 'is-invalid'" required maxlength="50">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('customerCode')}" th:errors="*{customerCode}">Error</div>
+                    </div>
+
+                    <!-- Name -->
+                    <div class="col-md-6 mb-3">
+                        <label for="name" class="form-label" th:text="#{customers.name}">Name</label>
+                        <input type="text" class="form-control" id="name" th:field="*{name}"
+                               th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" required maxlength="200">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Error</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Phone -->
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label" th:text="#{customers.phone}">Phone</label>
+                        <input type="tel" class="form-control" id="phone" th:field="*{phone}"
+                               th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'" required maxlength="20">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">Error</div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label" th:text="#{customers.email}">Email</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}"
+                               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" maxlength="255">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Error</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Address -->
+                    <div class="col-md-12 mb-3">
+                        <label for="address" class="form-label" th:text="#{customers.address}">Address</label>
+                        <textarea class="form-control" id="address" th:field="*{address}" rows="2" maxlength="500"></textarea>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- City -->
+                    <div class="col-md-4 mb-3">
+                        <label for="city" class="form-label" th:text="#{customers.city}">City</label>
+                        <input type="text" class="form-control" id="city" th:field="*{city}" maxlength="100">
+                    </div>
+
+                    <!-- State -->
+                    <div class="col-md-4 mb-3">
+                        <label for="state" class="form-label" th:text="#{customers.state}">State</label>
+                        <input type="text" class="form-control" id="state" th:field="*{state}" maxlength="100">
+                    </div>
+
+                    <!-- Pincode -->
+                    <div class="col-md-4 mb-3">
+                        <label for="pincode" class="form-label" th:text="#{customers.pincode}">Pincode</label>
+                        <input type="text" class="form-control" id="pincode" th:field="*{pincode}" maxlength="10">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- GSTIN -->
+                    <div class="col-md-6 mb-3">
+                        <label for="gstin" class="form-label" th:text="#{customers.gstin}">GSTIN</label>
+                        <input type="text" class="form-control" id="gstin" th:field="*{gstin}" maxlength="15">
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-md-6 mb-3">
+                        <label for="status" class="form-label" th:text="#{masters.status}">Status</label>
+                        <select class="form-select" id="status" th:field="*{status}">
+                            <option value="ACTIVE" th:text="#{masters.active}">Active</option>
+                            <option value="INACTIVE" th:text="#{masters.inactive}">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> <span th:text="#{masters.save}">Save</span>
+                    </button>
+                    <a th:href="@{/customers}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-lg"></i> <span th:text="#{masters.cancel}">Cancel</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{orders.wizard.step1}">Select Customer</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-receipt"></i>
+                <span th:text="${isEditing} ? #{orders.editOrder} : #{orders.newOrder}">New Order</span>
+            </h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}" th:text="#{nav.dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/orders}" th:text="#{orders.title}">Orders</a></li>
+                    <li class="breadcrumb-item active" th:text="#{orders.wizard.step1}">Step 1</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Wizard Progress -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div class="wizard-step active">
+                    <span class="badge bg-primary rounded-circle">1</span>
+                    <span class="ms-2" th:text="#{orders.wizard.customer}">Customer</span>
+                </div>
+                <div class="wizard-step">
+                    <span class="badge bg-secondary rounded-circle">2</span>
+                    <span class="ms-2 text-muted" th:text="#{orders.wizard.event}">Event</span>
+                </div>
+                <div class="wizard-step">
+                    <span class="badge bg-secondary rounded-circle">3</span>
+                    <span class="ms-2 text-muted" th:text="#{orders.wizard.menu}">Menu</span>
+                </div>
+                <div class="wizard-step">
+                    <span class="badge bg-secondary rounded-circle">4</span>
+                    <span class="ms-2 text-muted" th:text="#{orders.wizard.utilities}">Utilities</span>
+                </div>
+                <div class="wizard-step">
+                    <span class="badge bg-secondary rounded-circle">5</span>
+                    <span class="ms-2 text-muted" th:text="#{orders.wizard.summary}">Summary</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 1: Customer Selection -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="card-title mb-0"><i class="bi bi-person"></i> <span th:text="#{orders.selectCustomer}">Select Customer</span></h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/orders/wizard/step1}" method="post" th:object="${form}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <!-- Customer Selection Type -->
+                <div class="mb-4">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="createNewCustomer" id="existingCustomer"
+                               value="false" th:checked="${!form.createNewCustomer}" onclick="toggleCustomerForm(false)">
+                        <label class="form-check-label" for="existingCustomer" th:text="#{orders.existingCustomer}">Existing Customer</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="createNewCustomer" id="newCustomer"
+                               value="true" th:checked="${form.createNewCustomer}" onclick="toggleCustomerForm(true)">
+                        <label class="form-check-label" for="newCustomer" th:text="#{orders.newCustomer}">New Customer</label>
+                    </div>
+                </div>
+
+                <!-- Existing Customer Search -->
+                <div id="existingCustomerForm" th:class="${form.createNewCustomer} ? 'd-none' : ''">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label" th:text="#{orders.searchCustomer}">Search Customer</label>
+                            <input type="text" class="form-control" id="customerSearch"
+                                   placeholder="Search by name or phone..." autocomplete="off">
+                            <div id="customerSearchResults" class="list-group position-absolute w-50 shadow" style="z-index: 1000; display: none;"></div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="customerId" id="customerId" th:value="${form.customerId}">
+
+                    <!-- Selected Customer Display -->
+                    <div id="selectedCustomer" class="card bg-light" th:class="${form.customerId != null} ? 'card bg-light' : 'd-none card bg-light'">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1" id="selectedCustomerName" th:text="${form.customerName}">Customer Name</h6>
+                                    <p class="mb-0 text-muted">
+                                        <span id="selectedCustomerCode" th:text="${form.customerCode}">CUST-001</span> |
+                                        <span id="selectedCustomerPhone" th:text="${form.customerPhone}">9876543210</span>
+                                    </p>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearCustomer()">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer List -->
+                    <div class="table-responsive mt-4">
+                        <table class="table table-hover table-sm">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th th:text="#{customers.code}">Code</th>
+                                <th th:text="#{customers.name}">Name</th>
+                                <th th:text="#{customers.phone}">Phone</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="customer : ${customers}" style="cursor: pointer"
+                                th:onclick="'selectCustomer(' + ${customer.id} + ', \'' + ${customer.customerCode} + '\', \'' + ${customer.name} + '\', \'' + ${customer.phone} + '\')'">
+                                <td>
+                                    <input type="radio" name="customerRadio" th:value="${customer.id}"
+                                           th:checked="${customer.id == form.customerId}">
+                                </td>
+                                <td th:text="${customer.customerCode}">CUST-001</td>
+                                <td th:text="${customer.name}">John Doe</td>
+                                <td th:text="${customer.phone}">9876543210</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- New Customer Form -->
+                <div id="newCustomerForm" th:class="${form.createNewCustomer} ? '' : 'd-none'">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" th:text="#{customers.name}">Name *</label>
+                            <input type="text" class="form-control" name="newCustomer.name"
+                                   th:value="${form.newCustomer?.name}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" th:text="#{customers.phone}">Phone *</label>
+                            <input type="text" class="form-control" name="newCustomer.phone"
+                                   th:value="${form.newCustomer?.phone}" maxlength="10" pattern="[0-9]{10}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" th:text="#{customers.email}">Email</label>
+                            <input type="email" class="form-control" name="newCustomer.email"
+                                   th:value="${form.newCustomer?.email}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" th:text="#{customers.city}">City</label>
+                            <input type="text" class="form-control" name="newCustomer.city"
+                                   th:value="${form.newCustomer?.city}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" th:text="#{customers.address}">Address</label>
+                        <textarea class="form-control" name="newCustomer.address" rows="2"
+                                  th:text="${form.newCustomer?.address}"></textarea>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="d-flex justify-content-between mt-4">
+                    <form th:action="@{/orders/wizard/cancel}" method="post" class="d-inline">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> <span th:text="#{common.cancel}">Cancel</span>
+                        </button>
+                    </form>
+                    <button type="submit" class="btn btn-primary">
+                        <span th:text="#{common.next}">Next</span> <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        function toggleCustomerForm(isNew) {
+            document.getElementById('existingCustomerForm').classList.toggle('d-none', isNew);
+            document.getElementById('newCustomerForm').classList.toggle('d-none', !isNew);
+            if (isNew) {
+                document.getElementById('customerId').value = '';
+            }
+        }
+
+        function selectCustomer(id, code, name, phone) {
+            document.getElementById('customerId').value = id;
+            document.getElementById('selectedCustomerName').textContent = name;
+            document.getElementById('selectedCustomerCode').textContent = code;
+            document.getElementById('selectedCustomerPhone').textContent = phone;
+            document.getElementById('selectedCustomer').classList.remove('d-none');
+            // Check the radio button
+            const radios = document.querySelectorAll('input[name="customerRadio"]');
+            radios.forEach(r => r.checked = r.value == id);
+        }
+
+        function clearCustomer() {
+            document.getElementById('customerId').value = '';
+            document.getElementById('selectedCustomer').classList.add('d-none');
+            const radios = document.querySelectorAll('input[name="customerRadio"]');
+            radios.forEach(r => r.checked = false);
+        }
+
+        // Customer search
+        const searchInput = document.getElementById('customerSearch');
+        const resultsDiv = document.getElementById('customerSearchResults');
+        let searchTimeout;
+
+        searchInput?.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
+
+            if (query.length < 2) {
+                resultsDiv.style.display = 'none';
+                return;
+            }
+
+            searchTimeout = setTimeout(() => {
+                fetch('/orders/api/customers/search?q=' + encodeURIComponent(query))
+                    .then(r => r.json())
+                    .then(customers => {
+                        resultsDiv.innerHTML = '';
+                        if (customers.length === 0) {
+                            resultsDiv.innerHTML = '<div class="list-group-item text-muted">No customers found</div>';
+                        } else {
+                            customers.forEach(c => {
+                                const item = document.createElement('a');
+                                item.href = '#';
+                                item.className = 'list-group-item list-group-item-action';
+                                item.innerHTML = '<strong>' + c.name + '</strong><br><small class="text-muted">' + c.code + ' | ' + c.phone + '</small>';
+                                item.onclick = (e) => {
+                                    e.preventDefault();
+                                    selectCustomer(c.id, c.code, c.name, c.phone);
+                                    searchInput.value = '';
+                                    resultsDiv.style.display = 'none';
+                                };
+                                resultsDiv.appendChild(item);
+                            });
+                        }
+                        resultsDiv.style.display = 'block';
+                    });
+            }, 300);
+        });
+
+        // Hide results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!searchInput?.contains(e.target) && !resultsDiv?.contains(e.target)) {
+                resultsDiv.style.display = 'none';
+            }
+        });
+    </script>
+</th:block>
+</body>
+</html>

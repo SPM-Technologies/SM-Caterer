@@ -26,15 +26,16 @@ public class OrderMenuItemDTO extends BaseDTO {
 
     @NotNull(message = "Menu is required")
     private Long menuId;
-    private String menuName; // For display
+    private String menuCode;  // For display
+    private String menuName;  // For display (from translation)
 
     @NotNull(message = "Quantity is required")
     @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
 
-    @NotNull(message = "Price is required")
+    @NotNull(message = "Price per item is required")
     @DecimalMin(value = "0.00", message = "Price must be non-negative")
-    private BigDecimal price;
+    private BigDecimal pricePerItem;
 
     @DecimalMin(value = "0.00", message = "Subtotal must be non-negative")
     private BigDecimal subtotal;

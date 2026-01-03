@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{orders.wizard.step4}">Utilities</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0"><i class="bi bi-receipt"></i> <span th:text="#{orders.newOrder}">New Order</span></h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/orders}" th:text="#{orders.title}">Orders</a></li>
+                    <li class="breadcrumb-item active" th:text="#{orders.wizard.step4}">Step 4</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Wizard Progress -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div class="wizard-step completed"><span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span> <span class="ms-2" th:text="#{orders.wizard.customer}">Customer</span></div>
+                <div class="wizard-step completed"><span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span> <span class="ms-2" th:text="#{orders.wizard.event}">Event</span></div>
+                <div class="wizard-step completed"><span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span> <span class="ms-2" th:text="#{orders.wizard.menu}">Menu</span></div>
+                <div class="wizard-step active"><span class="badge bg-primary rounded-circle">4</span> <span class="ms-2" th:text="#{orders.wizard.utilities}">Utilities</span></div>
+                <div class="wizard-step"><span class="badge bg-secondary rounded-circle">5</span> <span class="ms-2 text-muted" th:text="#{orders.wizard.summary}">Summary</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Utility Selection -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0"><i class="bi bi-tools"></i> <span th:text="#{orders.selectUtilities}">Select Utilities (Optional)</span></h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group" id="utilityList" style="max-height: 400px; overflow-y: auto;">
+                        <div th:each="utility : ${utilities}" class="list-group-item list-group-item-action utility-item"
+                             th:data-id="${utility.id}"
+                             th:data-code="${utility.utilityCode}"
+                             th:data-name="${utility.utilityCode}"
+                             th:data-price="${utility.pricePerUnit}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1" th:text="${utility.utilityCode}">Utility Code</h6>
+                                    <small class="text-muted" th:text="${#numbers.formatCurrency(utility.pricePerUnit)}">50.00</small>/unit
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="showAddUtilityModal(this)">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(utilities)}" class="text-center text-muted py-4">
+                            <p th:text="#{orders.noUtilitiesAvailable}">No utilities available</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Selected Utilities -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0"><i class="bi bi-cart"></i> <span th:text="#{orders.selectedUtilities}">Selected Utilities</span></h5>
+                </div>
+                <div class="card-body">
+                    <div id="selectedUtilities">
+                        <div th:each="item, stat : ${form.utilities}" class="selected-item mb-2 p-2 border rounded">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong th:text="${item.utilityName ?: item.utilityCode}">Utility</strong><br>
+                                    <small class="text-muted">
+                                        <span th:text="${item.quantity}">5</span> x
+                                        <span th:text="${#numbers.formatCurrency(item.pricePerUnit)}">50</span> =
+                                        <strong th:text="${#numbers.formatCurrency(item.subtotal)}">250</strong>
+                                    </small>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-danger" th:onclick="'removeUtility(' + ${stat.index} + ')'">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(form.utilities)}" class="text-center text-muted py-4" id="noUtilitiesMessage">
+                            <i class="bi bi-inbox fs-3"></i>
+                            <p th:text="#{orders.noUtilitiesSelected}">No utilities added (optional)</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <strong th:text="#{orders.utilitySubtotal}">Utility Subtotal</strong>
+                        <strong id="utilitySubtotal" th:text="${#numbers.formatCurrency(form.utilitySubtotal)}">0.00</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <form th:action="@{/orders/wizard/step4}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <div class="d-flex justify-content-between">
+                    <a th:href="@{/orders/wizard/back/4}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> <span th:text="#{common.back}">Back</span>
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <span th:text="#{common.next}">Next</span> <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Utility Modal -->
+    <div class="modal fade" id="addUtilityModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:text="#{orders.addUtility}">Add Utility</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="addUtilityId">
+                    <div class="mb-3">
+                        <label class="form-label" th:text="#{orders.utility}">Utility</label>
+                        <input type="text" class="form-control" id="addUtilityName" readonly>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" th:text="#{orders.quantity}">Quantity *</label>
+                            <input type="number" class="form-control" id="addUtilityQty" value="1" min="1" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" th:text="#{orders.pricePerUnit}">Price/Unit *</label>
+                            <input type="number" class="form-control" id="addUtilityPrice" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" th:text="#{orders.subtotal}">Subtotal</label>
+                        <input type="text" class="form-control" id="addUtilitySubtotal" readonly>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{common.cancel}">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addUtility()" th:text="#{common.add}">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const csrfToken = [[${_csrf.token}]];
+        const csrfHeader = [[${_csrf.headerName}]];
+
+        function showAddUtilityModal(btn) {
+            const item = btn.closest('.utility-item');
+            document.getElementById('addUtilityId').value = item.dataset.id;
+            document.getElementById('addUtilityName').value = item.dataset.name;
+            document.getElementById('addUtilityPrice').value = item.dataset.price;
+            document.getElementById('addUtilityQty').value = 1;
+            updateUtilitySubtotal();
+            new bootstrap.Modal(document.getElementById('addUtilityModal')).show();
+        }
+
+        document.getElementById('addUtilityQty')?.addEventListener('input', updateUtilitySubtotal);
+        document.getElementById('addUtilityPrice')?.addEventListener('input', updateUtilitySubtotal);
+
+        function updateUtilitySubtotal() {
+            const qty = parseFloat(document.getElementById('addUtilityQty').value) || 0;
+            const price = parseFloat(document.getElementById('addUtilityPrice').value) || 0;
+            document.getElementById('addUtilitySubtotal').value = (qty * price).toFixed(2);
+        }
+
+        function addUtility() {
+            const data = {
+                utilityId: parseInt(document.getElementById('addUtilityId').value),
+                utilityCode: document.getElementById('addUtilityName').value,
+                utilityName: document.getElementById('addUtilityName').value,
+                quantity: parseInt(document.getElementById('addUtilityQty').value),
+                pricePerUnit: parseFloat(document.getElementById('addUtilityPrice').value)
+            };
+
+            fetch('/orders/wizard/step4/add-item', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    location.reload();
+                } else {
+                    alert(result.message || 'Failed to add utility');
+                }
+            });
+        }
+
+        function removeUtility(index) {
+            fetch('/orders/wizard/step4/remove-item/' + index, {
+                method: 'POST',
+                headers: { [csrfHeader]: csrfToken }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    location.reload();
+                }
+            });
+        }
+    </script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{orders.title}">Orders</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0"><i class="bi bi-receipt"></i> <span th:text="#{orders.list}">Order List</span></h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}" th:text="#{nav.dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" th:text="#{orders.title}">Orders</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <a th:href="@{/orders/new}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> <span th:text="#{orders.new}">New Order</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Search Filters -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form th:action="@{/orders}" method="get" class="row g-3">
+                <div class="col-md-2">
+                    <label class="form-label" th:text="#{orders.orderNumber}">Order #</label>
+                    <input type="text" class="form-control" name="orderNumber" th:value="${criteria?.orderNumber}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label" th:text="#{orders.customerName}">Customer</label>
+                    <input type="text" class="form-control" name="customerName" th:value="${criteria?.customerName}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label" th:text="#{orders.status}">Status</label>
+                    <select class="form-select" name="status">
+                        <option value="" th:text="#{common.all}">All</option>
+                        <option th:each="s : ${statuses}" th:value="${s.name()}" th:text="${s.displayName}"
+                                th:selected="${criteria?.status?.name() == s.name()}">Status</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label" th:text="#{orders.eventDateFrom}">From Date</label>
+                    <input type="date" class="form-control" name="eventDateFrom" th:value="${criteria?.eventDateFrom}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label" th:text="#{orders.eventDateTo}">To Date</label>
+                    <input type="date" class="form-control" name="eventDateTo" th:value="${criteria?.eventDateTo}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-secondary me-2">
+                        <i class="bi bi-search"></i> <span th:text="#{common.search}">Search</span>
+                    </button>
+                    <a th:href="@{/orders}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="ordersTable" class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th th:text="#{orders.orderNumber}">Order #</th>
+                        <th th:text="#{orders.customerName}">Customer</th>
+                        <th th:text="#{orders.eventDate}">Event Date</th>
+                        <th th:text="#{orders.eventType}">Event Type</th>
+                        <th th:text="#{orders.guestCount}">Guests</th>
+                        <th th:text="#{orders.grandTotal}">Total</th>
+                        <th th:text="#{orders.status}">Status</th>
+                        <th class="action-column" th:text="#{masters.actions}">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td>
+                            <a th:href="@{/orders/{id}(id=${order.id})}" class="text-decoration-none fw-medium">
+                                <span th:text="${order.orderNumber}">ORD-001</span>
+                            </a>
+                        </td>
+                        <td th:text="${order.customerName}">John Doe</td>
+                        <td th:text="${#temporals.format(order.eventDate, 'dd MMM yyyy')}">01 Jan 2024</td>
+                        <td th:text="${order.eventTypeName}">Wedding</td>
+                        <td th:text="${order.guestCount}">100</td>
+                        <td th:text="${#numbers.formatCurrency(order.totalAmount)}">10,000</td>
+                        <td>
+                            <span class="badge" th:classappend="${order.status.badgeClass}"
+                                  th:text="${order.status.displayName}">Draft</span>
+                        </td>
+                        <td class="action-column">
+                            <div class="btn-group btn-group-action">
+                                <a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-sm btn-outline-primary"
+                                   th:title="#{common.view}">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a th:if="${order.status.editable}"
+                                   th:href="@{/orders/{id}/edit(id=${order.id})}"
+                                   class="btn btn-sm btn-outline-secondary"
+                                   th:title="#{common.edit}">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a th:href="@{/orders/{id}/print(id=${order.id})}"
+                                   class="btn btn-sm btn-outline-info" target="_blank"
+                                   th:title="#{common.print}">
+                                    <i class="bi bi-printer"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(orders)}">
+                        <td colspan="8" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox fs-1"></i>
+                            <p class="mt-2" th:text="#{orders.noOrders}">No orders found. Click "New Order" to create one.</p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div th:replace="~{fragments/pagination :: pagination('/orders')}"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

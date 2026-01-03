@@ -132,4 +132,49 @@ public interface OrderRepository extends BaseRepository<Order, Long> {
     long countByEventDateRange(@Param("tenantId") Long tenantId,
                                @Param("startDate") LocalDate startDate,
                                @Param("endDate") LocalDate endDate);
+
+    /**
+     * Counts orders with order number prefix (for order number generation).
+     */
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.tenant.id = :tenantId AND o.orderNumber LIKE :prefix%")
+    long countByTenantIdAndOrderNumberStartingWith(@Param("tenantId") Long tenantId,
+                                                   @Param("prefix") String prefix);
+
+    /**
+     * Finds order with all details loaded (for view page).
+     */
+    @EntityGraph(attributePaths = {"customer", "eventType", "menuItems", "menuItems.menu",
+                                   "utilities", "utilities.utility", "payments"})
+    @Query("SELECT o FROM Order o WHERE o.id = :id")
+    Optional<Order> findByIdWithDetails(@Param("id") Long id);
+
+    /**
+     * Searches orders by multiple criteria.
+     */
+    @Query("SELECT o FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND (:status IS NULL OR o.status = :status) " +
+           "AND (:customerName IS NULL OR o.customer.name LIKE %:customerName%) " +
+           "AND (:orderNumber IS NULL OR o.orderNumber LIKE %:orderNumber%) " +
+           "AND (:fromDate IS NULL OR o.eventDate >= :fromDate) " +
+           "AND (:toDate IS NULL OR o.eventDate <= :toDate)")
+    Page<Order> searchOrders(@Param("tenantId") Long tenantId,
+                             @Param("status") OrderStatus status,
+                             @Param("customerName") String customerName,
+                             @Param("orderNumber") String orderNumber,
+                             @Param("fromDate") LocalDate fromDate,
+                             @Param("toDate") LocalDate toDate,
+                             Pageable pageable);
+
+    /**
+     * Counts today's orders for tenant.
+     */
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND o.eventDate = :date AND o.status NOT IN ('CANCELLED')")
+    long countTodaysOrders(@Param("tenantId") Long tenantId, @Param("date") LocalDate date);
+
+    /**
+     * Counts pending approval orders.
+     */
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.tenant.id = :tenantId AND o.status = 'PENDING'")
+    long countPendingApproval(@Param("tenantId") Long tenantId);
 }

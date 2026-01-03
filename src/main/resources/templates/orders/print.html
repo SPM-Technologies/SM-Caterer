@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Order ' + ${order.orderNumber}">Order Print</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
+        .header h1 { font-size: 24px; margin-bottom: 5px; }
+        .header p { color: #666; }
+        .order-info { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .info-box { flex: 1; padding: 10px; background: #f5f5f5; margin: 0 5px; border-radius: 5px; }
+        .info-box:first-child { margin-left: 0; }
+        .info-box:last-child { margin-right: 0; }
+        .info-box h3 { font-size: 11px; color: #666; text-transform: uppercase; margin-bottom: 5px; }
+        .info-box p { font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f5f5f5; font-weight: bold; }
+        .text-right { text-align: right; }
+        .totals { margin-left: auto; width: 300px; }
+        .totals td { padding: 5px 10px; }
+        .totals .total-row { font-weight: bold; font-size: 14px; border-top: 2px solid #333; }
+        .section-title { font-size: 14px; font-weight: bold; margin: 20px 0 10px; padding-bottom: 5px; border-bottom: 1px solid #ddd; }
+        .notes { padding: 10px; background: #f9f9f9; border-radius: 5px; white-space: pre-wrap; }
+        .footer { margin-top: 40px; text-align: center; font-size: 10px; color: #666; }
+        .status-badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: bold; }
+        .status-draft { background: #6c757d; color: white; }
+        .status-pending { background: #ffc107; color: #333; }
+        .status-confirmed { background: #17a2b8; color: white; }
+        .status-in_progress { background: #007bff; color: white; }
+        .status-completed { background: #28a745; color: white; }
+        .status-cancelled { background: #dc3545; color: white; }
+        @media print {
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Print Button -->
+    <div class="no-print" style="text-align: right; margin-bottom: 20px;">
+        <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer;">Print Order</button>
+        <button onclick="window.close()" style="padding: 10px 20px; cursor: pointer; margin-left: 10px;">Close</button>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>SM-CATERER</h1>
+        <p>Catering Services</p>
+    </div>
+
+    <!-- Order Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div>
+            <h2 style="font-size: 18px;">ORDER <span th:text="${order.orderNumber}">ORD-001</span></h2>
+        </div>
+        <div>
+            <span class="status-badge" th:classappend="'status-' + ${order.status.name().toLowerCase()}"
+                  th:text="${order.statusDisplayName}">Draft</span>
+        </div>
+    </div>
+
+    <!-- Info Boxes -->
+    <div class="order-info">
+        <div class="info-box">
+            <h3>Customer</h3>
+            <p><strong th:text="${order.customerName}">John Doe</strong></p>
+            <p th:text="${order.customerPhone}">9876543210</p>
+            <p th:if="${order.customerEmail}" th:text="${order.customerEmail}">email@example.com</p>
+        </div>
+        <div class="info-box">
+            <h3>Event Details</h3>
+            <p><strong th:text="${order.eventTypeName}">Wedding</strong></p>
+            <p th:text="${#temporals.format(order.eventDate, 'dd MMM yyyy')}">01 Jan 2024</p>
+            <p th:if="${order.eventTime}" th:text="${#temporals.format(order.eventTime, 'hh:mm a')}">12:00 PM</p>
+            <p><span th:text="${order.guestCount}">100</span> Guests</p>
+        </div>
+        <div class="info-box">
+            <h3>Venue</h3>
+            <p><strong th:text="${order.venueName}">Venue Name</strong></p>
+            <p th:if="${order.venueAddress}" th:text="${order.venueAddress}">Address</p>
+        </div>
+    </div>
+
+    <!-- Menu Items -->
+    <div class="section-title">Menu Items</div>
+    <table>
+        <thead>
+        <tr>
+            <th>Item</th>
+            <th class="text-right">Qty</th>
+            <th class="text-right">Price/Item</th>
+            <th class="text-right">Subtotal</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${order.menuItems}">
+            <td th:text="${item.menuName ?: item.menuCode}">Menu Item</td>
+            <td class="text-right" th:text="${item.quantity}">10</td>
+            <td class="text-right" th:text="${#numbers.formatDecimal(item.pricePerItem, 1, 2)}">100.00</td>
+            <td class="text-right" th:text="${#numbers.formatDecimal(item.subtotal, 1, 2)}">1000.00</td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="3" class="text-right"><strong>Menu Subtotal</strong></td>
+            <td class="text-right"><strong th:text="${#numbers.formatDecimal(order.menuSubtotal, 1, 2)}">5000.00</strong></td>
+        </tr>
+        </tfoot>
+    </table>
+
+    <!-- Utilities -->
+    <div th:if="${!#lists.isEmpty(order.utilities)}">
+        <div class="section-title">Utilities</div>
+        <table>
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th class="text-right">Qty</th>
+                <th class="text-right">Price/Unit</th>
+                <th class="text-right">Subtotal</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${order.utilities}">
+                <td th:text="${item.utilityName ?: item.utilityCode}">Utility</td>
+                <td class="text-right" th:text="${item.quantity}">5</td>
+                <td class="text-right" th:text="${#numbers.formatDecimal(item.pricePerUnit, 1, 2)}">50.00</td>
+                <td class="text-right" th:text="${#numbers.formatDecimal(item.subtotal, 1, 2)}">250.00</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="3" class="text-right"><strong>Utility Subtotal</strong></td>
+                <td class="text-right"><strong th:text="${#numbers.formatDecimal(order.utilitySubtotal, 1, 2)}">500.00</strong></td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- Totals -->
+    <table class="totals">
+        <tr>
+            <td>Subtotal</td>
+            <td class="text-right" th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}">5500.00</td>
+        </tr>
+        <tr th:if="${order.discountAmount > 0}">
+            <td>Discount (<span th:text="${order.discountPercent}">5</span>%)</td>
+            <td class="text-right" style="color: red;">-<span th:text="${#numbers.formatDecimal(order.discountAmount, 1, 2)}">275.00</span></td>
+        </tr>
+        <tr th:if="${order.taxAmount > 0}">
+            <td>Tax (<span th:text="${order.taxPercent}">18</span>%)</td>
+            <td class="text-right" th:text="${#numbers.formatDecimal(order.taxAmount, 1, 2)}">940.50</td>
+        </tr>
+        <tr class="total-row">
+            <td>Grand Total</td>
+            <td class="text-right" th:text="${#numbers.formatDecimal(order.grandTotal, 1, 2)}">6165.50</td>
+        </tr>
+        <tr>
+            <td>Paid</td>
+            <td class="text-right" style="color: green;" th:text="${#numbers.formatDecimal(order.advanceAmount, 1, 2)}">2000.00</td>
+        </tr>
+        <tr>
+            <td><strong>Balance Due</strong></td>
+            <td class="text-right" th:style="${order.balanceAmount > 0 ? 'color: orange;' : 'color: green;'}">
+                <strong th:text="${#numbers.formatDecimal(order.balanceAmount, 1, 2)}">4165.50</strong>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Notes -->
+    <div th:if="${order.notes}">
+        <div class="section-title">Notes</div>
+        <div class="notes" th:text="${order.notes}">Order notes</div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Thank you for your business!</p>
+        <p th:text="'Generated on ' + ${#temporals.format(#temporals.createNow(), 'dd MMM yyyy HH:mm')}">Date</p>
+    </div>
+</div>
+</body>
+</html>

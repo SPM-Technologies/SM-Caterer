@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{orders.wizard.step3}">Menu Items</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0"><i class="bi bi-receipt"></i> <span th:text="#{orders.newOrder}">New Order</span></h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/orders}" th:text="#{orders.title}">Orders</a></li>
+                    <li class="breadcrumb-item active" th:text="#{orders.wizard.step3}">Step 3</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Wizard Progress -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div class="wizard-step completed"><span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span> <span class="ms-2" th:text="#{orders.wizard.customer}">Customer</span></div>
+                <div class="wizard-step completed"><span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span> <span class="ms-2" th:text="#{orders.wizard.event}">Event</span></div>
+                <div class="wizard-step active"><span class="badge bg-primary rounded-circle">3</span> <span class="ms-2" th:text="#{orders.wizard.menu}">Menu</span></div>
+                <div class="wizard-step"><span class="badge bg-secondary rounded-circle">4</span> <span class="ms-2 text-muted" th:text="#{orders.wizard.utilities}">Utilities</span></div>
+                <div class="wizard-step"><span class="badge bg-secondary rounded-circle">5</span> <span class="ms-2 text-muted" th:text="#{orders.wizard.summary}">Summary</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Menu Selection -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0"><i class="bi bi-card-list"></i> <span th:text="#{orders.selectMenu}">Select Menu Items</span></h5>
+                </div>
+                <div class="card-body">
+                    <!-- Category Filter -->
+                    <div class="mb-3">
+                        <select id="categoryFilter" class="form-select" onchange="filterMenus()">
+                            <option value="" th:text="#{common.all}">All Categories</option>
+                            <option th:each="cat : ${categories}" th:value="${cat.name()}" th:text="#{|menus.category.${cat.name()}|}">VEG</option>
+                        </select>
+                    </div>
+
+                    <!-- Menu List -->
+                    <div class="list-group" id="menuList" style="max-height: 400px; overflow-y: auto;">
+                        <div th:each="menu : ${menus}" class="list-group-item list-group-item-action menu-item"
+                             th:data-category="${menu.category?.name()}"
+                             th:data-id="${menu.id}"
+                             th:data-code="${menu.menuCode}"
+                             th:data-name="${menu.menuCode}"
+                             th:data-price="${menu.costPerServe}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1" th:text="${menu.menuCode}">Menu Code</h6>
+                                    <small class="text-muted">
+                                        <span class="badge" th:classappend="${menu.category?.name() == 'VEG'} ? 'bg-success' : (${menu.category?.name() == 'NON_VEG'} ? 'bg-danger' : 'bg-info')"
+                                              th:text="#{|menus.category.${menu.category?.name()}|}">VEG</span>
+                                        <span th:text="${#numbers.formatCurrency(menu.costPerServe)}">100.00</span>/serve
+                                    </small>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="showAddMenuModal(this)">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Selected Items -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0"><i class="bi bi-cart"></i> <span th:text="#{orders.selectedItems}">Selected Items</span></h5>
+                </div>
+                <div class="card-body">
+                    <div id="selectedMenuItems">
+                        <div th:each="item, stat : ${form.menuItems}" class="selected-item mb-2 p-2 border rounded">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong th:text="${item.menuName ?: item.menuCode}">Menu</strong><br>
+                                    <small class="text-muted">
+                                        <span th:text="${item.quantity}">10</span> x
+                                        <span th:text="${#numbers.formatCurrency(item.pricePerItem)}">100</span> =
+                                        <strong th:text="${#numbers.formatCurrency(item.subtotal)}">1000</strong>
+                                    </small>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-danger" th:onclick="'removeMenuItem(' + ${stat.index} + ')'">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(form.menuItems)}" class="text-center text-muted py-4" id="noItemsMessage">
+                            <i class="bi bi-inbox fs-3"></i>
+                            <p th:text="#{orders.noMenuItems}">No menu items added yet</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <strong th:text="#{orders.menuSubtotal}">Menu Subtotal</strong>
+                        <strong id="menuSubtotal" th:text="${#numbers.formatCurrency(form.menuSubtotal)}">0.00</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <form th:action="@{/orders/wizard/step3}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <div class="d-flex justify-content-between">
+                    <a th:href="@{/orders/wizard/back/3}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> <span th:text="#{common.back}">Back</span>
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <span th:text="#{common.next}">Next</span> <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Menu Item Modal -->
+    <div class="modal fade" id="addMenuModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:text="#{orders.addMenuItem}">Add Menu Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="addMenuId">
+                    <div class="mb-3">
+                        <label class="form-label" th:text="#{orders.menu}">Menu</label>
+                        <input type="text" class="form-control" id="addMenuName" readonly>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" th:text="#{orders.quantity}">Quantity *</label>
+                            <input type="number" class="form-control" id="addMenuQty" value="1" min="1" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" th:text="#{orders.pricePerItem}">Price/Item *</label>
+                            <input type="number" class="form-control" id="addMenuPrice" step="0.01" min="0.01" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" th:text="#{orders.subtotal}">Subtotal</label>
+                        <input type="text" class="form-control" id="addMenuSubtotal" readonly>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{common.cancel}">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addMenuItem()" th:text="#{common.add}">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const csrfToken = [[${_csrf.token}]];
+        const csrfHeader = [[${_csrf.headerName}]];
+
+        function filterMenus() {
+            const category = document.getElementById('categoryFilter').value;
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.style.display = (!category || item.dataset.category === category) ? 'block' : 'none';
+            });
+        }
+
+        function showAddMenuModal(btn) {
+            const item = btn.closest('.menu-item');
+            document.getElementById('addMenuId').value = item.dataset.id;
+            document.getElementById('addMenuName').value = item.dataset.name;
+            document.getElementById('addMenuPrice').value = item.dataset.price;
+            document.getElementById('addMenuQty').value = 1;
+            updateSubtotal();
+            new bootstrap.Modal(document.getElementById('addMenuModal')).show();
+        }
+
+        document.getElementById('addMenuQty')?.addEventListener('input', updateSubtotal);
+        document.getElementById('addMenuPrice')?.addEventListener('input', updateSubtotal);
+
+        function updateSubtotal() {
+            const qty = parseFloat(document.getElementById('addMenuQty').value) || 0;
+            const price = parseFloat(document.getElementById('addMenuPrice').value) || 0;
+            document.getElementById('addMenuSubtotal').value = (qty * price).toFixed(2);
+        }
+
+        function addMenuItem() {
+            const data = {
+                menuId: parseInt(document.getElementById('addMenuId').value),
+                menuCode: document.getElementById('addMenuName').value,
+                menuName: document.getElementById('addMenuName').value,
+                quantity: parseInt(document.getElementById('addMenuQty').value),
+                pricePerItem: parseFloat(document.getElementById('addMenuPrice').value)
+            };
+
+            fetch('/orders/wizard/step3/add-item', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    location.reload();
+                } else {
+                    alert(result.message || 'Failed to add item');
+                }
+            });
+        }
+
+        function removeMenuItem(index) {
+            fetch('/orders/wizard/step3/remove-item/' + index, {
+                method: 'POST',
+                headers: { [csrfHeader]: csrfToken }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    location.reload();
+                }
+            });
+        }
+    </script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{orders.wizard.step2}">Event Details</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0"><i class="bi bi-receipt"></i> <span th:text="#{orders.newOrder}">New Order</span></h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/orders}" th:text="#{orders.title}">Orders</a></li>
+                    <li class="breadcrumb-item active" th:text="#{orders.wizard.step2}">Step 2</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Wizard Progress -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div class="wizard-step completed">
+                    <span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span>
+                    <span class="ms-2" th:text="#{orders.wizard.customer}">Customer</span>
+                </div>
+                <div class="wizard-step active">
+                    <span class="badge bg-primary rounded-circle">2</span>
+                    <span class="ms-2" th:text="#{orders.wizard.event}">Event</span>
+                </div>
+                <div class="wizard-step">
+                    <span class="badge bg-secondary rounded-circle">3</span>
+                    <span class="ms-2 text-muted" th:text="#{orders.wizard.menu}">Menu</span>
+                </div>
+                <div class="wizard-step">
+                    <span class="badge bg-secondary rounded-circle">4</span>
+                    <span class="ms-2 text-muted" th:text="#{orders.wizard.utilities}">Utilities</span>
+                </div>
+                <div class="wizard-step">
+                    <span class="badge bg-secondary rounded-circle">5</span>
+                    <span class="ms-2 text-muted" th:text="#{orders.wizard.summary}">Summary</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2: Event Details -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="card-title mb-0"><i class="bi bi-calendar-event"></i> <span th:text="#{orders.eventDetails}">Event Details</span></h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/orders/wizard/step2}" method="post" th:object="${form}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" th:text="#{orders.eventType}">Event Type *</label>
+                        <select class="form-select" name="eventTypeId" required>
+                            <option value="" th:text="#{common.select}">Select...</option>
+                            <option th:each="et : ${eventTypes}" th:value="${et.id}" th:text="${et.eventCode}"
+                                    th:selected="${et.id == form.eventTypeId}">Wedding</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label" th:text="#{orders.eventDate}">Event Date *</label>
+                        <input type="date" class="form-control" name="eventDate" th:value="${form.eventDate}" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label" th:text="#{orders.eventTime}">Event Time</label>
+                        <input type="time" class="form-control" name="eventTime" th:value="${form.eventTime}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" th:text="#{orders.venueName}">Venue Name *</label>
+                        <input type="text" class="form-control" name="venueName" th:value="${form.venueName}" required maxlength="200">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" th:text="#{orders.guestCount}">Guest Count *</label>
+                        <input type="number" class="form-control" name="guestCount" th:value="${form.guestCount}" required min="1" max="10000">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" th:text="#{orders.venueAddress}">Venue Address</label>
+                    <textarea class="form-control" name="venueAddress" rows="2" th:text="${form.venueAddress}" maxlength="1000"></textarea>
+                </div>
+
+                <!-- Navigation -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a th:href="@{/orders/wizard/back/2}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> <span th:text="#{common.back}">Back</span>
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <span th:text="#{common.next}">Next</span> <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

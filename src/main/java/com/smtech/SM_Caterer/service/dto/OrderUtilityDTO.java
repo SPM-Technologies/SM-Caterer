@@ -26,15 +26,16 @@ public class OrderUtilityDTO extends BaseDTO {
 
     @NotNull(message = "Utility is required")
     private Long utilityId;
-    private String utilityName; // For display
+    private String utilityCode;  // For display
+    private String utilityName;  // For display (from translation)
 
     @NotNull(message = "Quantity is required")
     @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
 
-    @NotNull(message = "Price is required")
+    @NotNull(message = "Price per unit is required")
     @DecimalMin(value = "0.00", message = "Price must be non-negative")
-    private BigDecimal price;
+    private BigDecimal pricePerUnit;
 
     @DecimalMin(value = "0.00", message = "Subtotal must be non-negative")
     private BigDecimal subtotal;
