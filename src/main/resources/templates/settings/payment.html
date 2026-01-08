@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title>Payment Settings</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-credit-card-2-front"></i> Payment Settings</h2>
+    </div>
+
+    <!-- Status Card -->
+    <div class="card mb-4" th:classappend="${settings.paymentEnabled} ? 'border-success' : 'border-warning'">
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <i th:if="${settings.paymentEnabled}" class="bi bi-check-circle-fill text-success fs-2 me-3"></i>
+                <i th:unless="${settings.paymentEnabled}" class="bi bi-pause-circle-fill text-warning fs-2 me-3"></i>
+                <div>
+                    <h5 th:if="${settings.paymentEnabled}" class="text-success mb-0">Payment feature is enabled</h5>
+                    <h5 th:unless="${settings.paymentEnabled}" class="text-warning mb-0">Payment feature is disabled</h5>
+                    <small th:if="${settings.paymentEnabled}" class="text-muted">You can record and track payments.</small>
+                    <small th:unless="${settings.paymentEnabled}" class="text-muted">Enable to start recording payments.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Form -->
+    <div class="card">
+        <div class="card-body">
+            <form th:action="@{/settings/payment}" th:object="${settings}" method="post" class="needs-validation" novalidate>
+                <!-- Enable Toggle -->
+                <div class="mb-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" th:field="*{paymentEnabled}" id="paymentEnabled">
+                        <label class="form-check-label" for="paymentEnabled">Enable Payment Feature</label>
+                    </div>
+                    <small class="text-muted">When disabled, payment recording will not be available.</small>
+                </div>
+
+                <hr>
+
+                <!-- UPI Settings -->
+                <h5 class="mb-3"><i class="bi bi-qr-code"></i> UPI QR Code Settings</h5>
+                <p class="text-muted">Configure default UPI details for generating payment QR codes.</p>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Default UPI ID</label>
+                        <input type="text" class="form-control" th:field="*{defaultUpiId}" placeholder="business@upi">
+                        <small class="text-muted">Your UPI Virtual Payment Address (VPA)</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">UPI Payee Name</label>
+                        <input type="text" class="form-control" th:field="*{upiPayeeName}" placeholder="Your Business Name">
+                        <small class="text-muted">Name shown to payer in UPI apps</small>
+                    </div>
+                </div>
+
+                <!-- UPI Status -->
+                <div class="alert" th:classappend="${isUpiConfigured} ? 'alert-success' : 'alert-info'">
+                    <i th:if="${isUpiConfigured}" class="bi bi-check-circle"></i>
+                    <i th:unless="${isUpiConfigured}" class="bi bi-info-circle"></i>
+                    <span th:if="${isUpiConfigured}">UPI QR code generation is ready.</span>
+                    <span th:unless="${isUpiConfigured}">Fill in both UPI ID and Payee Name to enable QR code generation.</span>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> <span th:text="#{common.save}">Save Settings</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

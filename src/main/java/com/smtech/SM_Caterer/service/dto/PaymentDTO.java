@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * DTO for Payment entity.
@@ -27,9 +27,15 @@ public class PaymentDTO extends BaseDTO {
 
     private Long tenantId;
 
+    private String paymentNumber;
+
     @NotNull(message = "Order is required")
     private Long orderId;
     private String orderNumber; // For display
+    private String customerName; // For display
+
+    @NotNull(message = "Payment date is required")
+    private LocalDate paymentDate;
 
     @NotNull(message = "Amount is required")
     @DecimalMin(value = "0.01", message = "Amount must be greater than zero")
@@ -38,14 +44,21 @@ public class PaymentDTO extends BaseDTO {
     @NotNull(message = "Payment method is required")
     private PaymentMethod paymentMethod;
 
-    @Size(max = 200, message = "Transaction reference must not exceed 200 characters")
+    @Size(max = 100, message = "Transaction reference must not exceed 100 characters")
     private String transactionReference;
 
-    private LocalDateTime paymentDate;
+    @Size(max = 100, message = "UPI ID must not exceed 100 characters")
+    private String upiId;
 
     @NotNull(message = "Status is required")
-    private PaymentStatus status;
+    @Builder.Default
+    private PaymentStatus status = PaymentStatus.COMPLETED;
 
     @Size(max = 500, message = "Notes must not exceed 500 characters")
     private String notes;
+
+    private String receiptPath;
+
+    @Builder.Default
+    private Boolean emailSent = false;
 }

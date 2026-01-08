@@ -16,6 +16,7 @@ public interface PaymentMapper extends EntityMapper<PaymentDTO, Payment> {
     @Mapping(target = "tenantId", source = "tenant.id")
     @Mapping(target = "orderId", source = "order.id")
     @Mapping(target = "orderNumber", source = "order.orderNumber")
+    @Mapping(target = "customerName", source = "order.customer.name")
     @Override
     PaymentDTO toDto(Payment entity);
 

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{payments.new}">Record Payment</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-cash-stack"></i> <span th:text="#{payments.recordPayment}">Record Payment</span></h2>
+        <a th:href="@{/payments}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> <span th:text="#{common.back}">Back</span>
+        </a>
+    </div>
+
+    <!-- Order Info Card -->
+    <div th:if="${order}" class="card mb-4 border-primary">
+        <div class="card-header bg-primary text-white">
+            <i class="bi bi-receipt"></i> Order Details
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Order Number:</strong>
+                    <p th:text="${order.orderNumber}">ORD-001</p>
+                </div>
+                <div class="col-md-3">
+                    <strong>Customer:</strong>
+                    <p th:text="${order.customerName}">Customer Name</p>
+                </div>
+                <div class="col-md-3">
+                    <strong>Order Total:</strong>
+                    <p class="text-primary fw-bold" th:text="${#numbers.formatCurrency(order.totalAmount)}">10,000.00</p>
+                </div>
+                <div class="col-md-3">
+                    <strong>Balance Due:</strong>
+                    <p class="text-danger fw-bold" th:text="${#numbers.formatCurrency(balanceDue)}">5,000.00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Form -->
+    <div class="card">
+        <div class="card-body">
+            <form th:action="@{/payments}" th:object="${payment}" method="post" class="needs-validation" novalidate>
+                <input type="hidden" th:field="*{orderId}">
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" th:text="#{payments.paymentDate}">Payment Date</label>
+                        <input type="date" class="form-control" th:field="*{paymentDate}" required>
+                        <div th:if="${#fields.hasErrors('paymentDate')}" class="invalid-feedback d-block"
+                             th:errors="*{paymentDate}">Error</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" th:text="#{payments.amount}">Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input type="number" step="0.01" min="0.01" class="form-control" th:field="*{amount}" required
+                                   th:max="${balanceDue}">
+                        </div>
+                        <div th:if="${#fields.hasErrors('amount')}" class="invalid-feedback d-block"
+                             th:errors="*{amount}">Error</div>
+                        <small th:if="${balanceDue}" class="text-muted">
+                            Maximum: <span th:text="${#numbers.formatCurrency(balanceDue)}">5,000.00</span>
+                        </small>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" th:text="#{payments.paymentMethod}">Payment Method</label>
+                        <select class="form-select" th:field="*{paymentMethod}" required>
+                            <option th:each="m : ${methods}" th:value="${m}" th:text="#{|payment.method.${m}|}">Method</option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('paymentMethod')}" class="invalid-feedback d-block"
+                             th:errors="*{paymentMethod}">Error</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" th:text="#{payments.status}">Status</label>
+                        <select class="form-select" th:field="*{status}" required>
+                            <option th:each="s : ${statuses}" th:value="${s}" th:text="#{|payment.status.${s}|}">Status</option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('status')}" class="invalid-feedback d-block"
+                             th:errors="*{status}">Error</div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" th:text="#{payments.transactionReference}">Transaction Reference</label>
+                        <input type="text" class="form-control" th:field="*{transactionReference}" maxlength="100">
+                        <small class="text-muted">Optional: UTR number, cheque number, etc.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" th:text="#{payments.upiId}">UPI ID</label>
+                        <input type="text" class="form-control" th:field="*{upiId}" maxlength="100">
+                        <small class="text-muted">Optional: Payer's UPI ID for UPI payments</small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" th:text="#{payments.notes}">Notes</label>
+                    <textarea class="form-control" th:field="*{notes}" rows="3"></textarea>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a th:href="@{/payments}" class="btn btn-outline-secondary" th:text="#{common.cancel}">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> <span th:text="#{common.save}">Save</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

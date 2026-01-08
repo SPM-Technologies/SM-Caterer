@@ -268,7 +268,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, OrderDTO, Long>
     private PaymentDTO mapToPaymentDTO(Payment payment) {
         PaymentDTO dto = new PaymentDTO();
         dto.setId(payment.getId());
-        dto.setPaymentDate(payment.getPaymentDate() != null ? payment.getPaymentDate().atStartOfDay() : null);
+        dto.setPaymentDate(payment.getPaymentDate());
         dto.setAmount(payment.getAmount());
         dto.setPaymentMethod(payment.getPaymentMethod());
         dto.setTransactionReference(payment.getTransactionReference());

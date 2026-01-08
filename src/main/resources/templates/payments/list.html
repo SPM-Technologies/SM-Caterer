@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{payments.title}">Payments</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-cash-stack"></i> <span th:text="#{payments.list}">Payment List</span></h2>
+        <a th:href="@{/payments/new}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> <span th:text="#{payments.recordPayment}">Record Payment</span>
+        </a>
+    </div>
+
+    <!-- Search Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:action="@{/payments}" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label" th:text="#{payments.status}">Status</label>
+                    <select class="form-select" name="status">
+                        <option value="" th:text="#{common.all}">All</option>
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"
+                                th:selected="${status == s}">Status</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" th:text="#{payments.paymentMethod}">Method</label>
+                    <select class="form-select" name="method">
+                        <option value="" th:text="#{common.all}">All</option>
+                        <option th:each="m : ${methods}" th:value="${m}" th:text="${m}"
+                                th:selected="${method == m}">Method</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">From Date</label>
+                    <input type="date" class="form-control" name="dateFrom" th:value="${dateFrom}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">To Date</label>
+                    <input type="date" class="form-control" name="dateTo" th:value="${dateTo}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-search"></i> <span th:text="#{common.search}">Search</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment Table -->
+    <div class="card">
+        <div class="card-body">
+            <div th:if="${#lists.isEmpty(payments)}" class="text-center py-5 text-muted">
+                <i class="bi bi-cash-stack" style="font-size: 3rem;"></i>
+                <p class="mt-3" th:text="#{payments.noPayments}">No payments found</p>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(payments)}" class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                    <tr>
+                        <th th:text="#{payments.paymentNumber}">Receipt No</th>
+                        <th th:text="#{payments.paymentDate}">Date</th>
+                        <th th:text="#{payments.order}">Order</th>
+                        <th th:text="#{payments.customer}">Customer</th>
+                        <th th:text="#{payments.amount}">Amount</th>
+                        <th th:text="#{payments.paymentMethod}">Method</th>
+                        <th th:text="#{payments.status}">Status</th>
+                        <th th:text="#{masters.actions}">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="payment : ${payments}">
+                        <td>
+                            <a th:href="@{/payments/{id}(id=${payment.id})}" th:text="${payment.paymentNumber}">PAY-001</a>
+                        </td>
+                        <td th:text="${#temporals.format(payment.paymentDate, 'dd-MM-yyyy')}">01-01-2026</td>
+                        <td>
+                            <a th:href="@{/orders/{id}(id=${payment.orderId})}" th:text="${payment.orderNumber}">ORD-001</a>
+                        </td>
+                        <td th:text="${payment.customerName ?: '-'}">Customer</td>
+                        <td class="text-end fw-bold" th:text="${#numbers.formatCurrency(payment.amount)}">1,000.00</td>
+                        <td>
+                            <span class="badge bg-info" th:text="${payment.paymentMethod}">CASH</span>
+                        </td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${payment.status.name() == 'COMPLETED'} ? 'bg-success' : (${payment.status.name() == 'PENDING'} ? 'bg-warning' : 'bg-danger')"
+                                  th:text="${payment.status}">COMPLETED</span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a th:href="@{/payments/{id}(id=${payment.id})}" class="btn btn-outline-info" title="View">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a th:href="@{/payments/{id}/receipt(id=${payment.id})}" class="btn btn-outline-primary" title="Download Receipt">
+                                    <i class="bi bi-file-pdf"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <nav th:if="${totalPages > 1}" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link" th:href="@{/payments(page=0, size=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir}, status=${status}, method=${method}, dateFrom=${dateFrom}, dateTo=${dateTo})}">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link" th:href="@{/payments(page=${currentPage - 1}, size=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir}, status=${status}, method=${method}, dateFrom=${dateFrom}, dateTo=${dateTo})}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link" th:text="${currentPage + 1} + ' / ' + ${totalPages}">1 / 10</span>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                        <a class="page-link" th:href="@{/payments(page=${currentPage + 1}, size=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir}, status=${status}, method=${method}, dateFrom=${dateFrom}, dateTo=${dateTo})}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                        <a class="page-link" th:href="@{/payments(page=${totalPages - 1}, size=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir}, status=${status}, method=${method}, dateFrom=${dateFrom}, dateTo=${dateTo})}">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+</body>
+</html>

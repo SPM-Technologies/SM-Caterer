@@ -5,37 +5,31 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Filter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
  * UPI QR Code entity for generating payment QR codes.
+ * Extends TenantBaseEntity for consistent multi-tenant support.
  */
 @Entity
 @Table(name = "upi_qr_codes",
        indexes = {
-           @Index(name = "idx_tenant_id", columnList = "tenant_id"),
-           @Index(name = "idx_order_id", columnList = "order_id"),
-           @Index(name = "idx_status", columnList = "status")
+           @Index(name = "idx_upi_qr_tenant_id", columnList = "tenant_id"),
+           @Index(name = "idx_upi_qr_order_id", columnList = "order_id"),
+           @Index(name = "idx_upi_qr_status", columnList = "status")
        })
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@ToString(exclude = {"tenant", "order"})
-@EqualsAndHashCode(exclude = {"tenant", "order"})
-public class UpiQrCode {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tenant_id", nullable = false)
-    @NotNull(message = "Tenant is required")
-    private Tenant tenant;
+@ToString(exclude = {"order"})
+@EqualsAndHashCode(callSuper = true, exclude = {"order"})
+public class UpiQrCode extends TenantBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
@@ -80,12 +74,10 @@ public class UpiQrCode {
     @Builder.Default
     private UpiQrCodeStatus status = UpiQrCodeStatus.ACTIVE;
 
-    @Version
-    @Column(name = "version")
-    private Long version;
-
     @PrePersist
-    protected void onCreate() {
+    @Override
+    protected void validateTenant() {
+        super.validateTenant();
         if (status == null) {
             status = UpiQrCodeStatus.ACTIVE;
         }
@@ -105,7 +97,6 @@ public class UpiQrCode {
     /**
      * Marks QR code as used.
      */
-    @Transient
     public void markAsUsed() {
         this.status = UpiQrCodeStatus.USED;
     }
@@ -113,7 +104,6 @@ public class UpiQrCode {
     /**
      * Marks QR code as expired.
      */
-    @Transient
     public void markAsExpired() {
         this.status = UpiQrCodeStatus.EXPIRED;
     }

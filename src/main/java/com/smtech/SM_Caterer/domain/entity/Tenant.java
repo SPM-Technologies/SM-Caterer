@@ -103,11 +103,88 @@ public class Tenant extends BaseEntity {
     @Column(name = "subscription_end_date")
     private LocalDate subscriptionEndDate;
 
+    // ========================================
+    // FEATURE TOGGLES
+    // ========================================
+
+    @Column(name = "payment_enabled")
+    @Builder.Default
+    private Boolean paymentEnabled = true;
+
+    @Column(name = "email_enabled")
+    @Builder.Default
+    private Boolean emailEnabled = false;
+
+    // ========================================
+    // EMAIL CONFIGURATION
+    // ========================================
+
+    @Column(name = "smtp_host", length = 255)
+    private String smtpHost;
+
+    @Column(name = "smtp_port")
+    private Integer smtpPort;
+
+    @Column(name = "smtp_username", length = 255)
+    private String smtpUsername;
+
+    @Column(name = "smtp_password", length = 255)
+    private String smtpPassword;
+
+    @Column(name = "smtp_from_email", length = 255)
+    @Email(message = "Invalid from email address")
+    private String smtpFromEmail;
+
+    @Column(name = "smtp_from_name", length = 100)
+    private String smtpFromName;
+
+    @Column(name = "smtp_use_tls")
+    @Builder.Default
+    private Boolean smtpUseTls = true;
+
+    // ========================================
+    // UPI CONFIGURATION
+    // ========================================
+
+    @Column(name = "default_upi_id", length = 100)
+    private String defaultUpiId;
+
+    @Column(name = "upi_payee_name", length = 200)
+    private String upiPayeeName;
+
     @PrePersist
     protected void onCreate() {
         if (status == null) {
             status = TenantStatus.ACTIVE;
         }
+    }
+
+    /**
+     * Checks if payment feature is enabled for this tenant.
+     */
+    @Transient
+    public boolean isPaymentFeatureEnabled() {
+        return paymentEnabled != null && paymentEnabled;
+    }
+
+    /**
+     * Checks if email is properly configured.
+     */
+    @Transient
+    public boolean isEmailConfigured() {
+        return emailEnabled != null && emailEnabled
+            && smtpHost != null && !smtpHost.isBlank()
+            && smtpPort != null
+            && smtpFromEmail != null && !smtpFromEmail.isBlank();
+    }
+
+    /**
+     * Checks if UPI is configured.
+     */
+    @Transient
+    public boolean isUpiConfigured() {
+        return defaultUpiId != null && !defaultUpiId.isBlank()
+            && upiPayeeName != null && !upiPayeeName.isBlank();
     }
 
     /**

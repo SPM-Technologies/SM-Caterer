@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{payments.view}">View Payment</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-receipt"></i>
+            <span th:text="${payment.paymentNumber}">PAY-20260108-0001</span>
+        </h2>
+        <div class="btn-group">
+            <a th:href="@{/payments/{id}/receipt(id=${payment.id})}" class="btn btn-primary">
+                <i class="bi bi-file-pdf"></i> <span th:text="#{payments.receiptDownload}">Download Receipt</span>
+            </a>
+            <form th:action="@{/payments/{id}/resend-email(id=${payment.id})}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="bi bi-envelope"></i> Resend Email
+                </button>
+            </form>
+            <a th:href="@{/payments}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> <span th:text="#{common.back}">Back</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Payment Details -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="bi bi-cash-stack"></i> <span th:text="#{receipt.paymentDetails}">Payment Details</span>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th width="40%" th:text="#{payments.paymentNumber}">Receipt No:</th>
+                            <td th:text="${payment.paymentNumber}">PAY-20260108-0001</td>
+                        </tr>
+                        <tr>
+                            <th th:text="#{payments.paymentDate}">Payment Date:</th>
+                            <td th:text="${#temporals.format(payment.paymentDate, 'dd-MM-yyyy')}">08-01-2026</td>
+                        </tr>
+                        <tr>
+                            <th th:text="#{payments.amount}">Amount:</th>
+                            <td class="text-primary fw-bold fs-5" th:text="${#numbers.formatCurrency(payment.amount)}">5,000.00</td>
+                        </tr>
+                        <tr>
+                            <th th:text="#{payments.paymentMethod}">Method:</th>
+                            <td>
+                                <span class="badge bg-info" th:text="#{|payment.method.${payment.paymentMethod}|}">CASH</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th th:text="#{payments.status}">Status:</th>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${payment.status.name() == 'COMPLETED'} ? 'bg-success' : (${payment.status.name() == 'PENDING'} ? 'bg-warning' : 'bg-danger')"
+                                      th:text="#{|payment.status.${payment.status}|}">COMPLETED</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${payment.transactionReference}">
+                            <th th:text="#{payments.transactionReference}">Transaction Ref:</th>
+                            <td th:text="${payment.transactionReference}">UTR123456789</td>
+                        </tr>
+                        <tr th:if="${payment.upiId}">
+                            <th th:text="#{payments.upiId}">UPI ID:</th>
+                            <td th:text="${payment.upiId}">customer@upi</td>
+                        </tr>
+                        <tr>
+                            <th>Email Sent:</th>
+                            <td>
+                                <span th:if="${payment.emailSent}" class="badge bg-success"><i class="bi bi-check-circle"></i> Yes</span>
+                                <span th:unless="${payment.emailSent}" class="badge bg-secondary"><i class="bi bi-x-circle"></i> No</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Details -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="bi bi-cart"></i> <span th:text="#{receipt.orderDetails}">Order Details</span>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th width="40%">Order Number:</th>
+                            <td>
+                                <a th:href="@{/orders/{id}(id=${payment.orderId})}" th:text="${payment.orderNumber}">ORD-001</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Customer:</th>
+                            <td th:text="${payment.customerName}">Customer Name</td>
+                        </tr>
+                    </table>
+                    <div class="d-grid gap-2 mt-3">
+                        <a th:href="@{/orders/{id}(id=${payment.orderId})}" class="btn btn-outline-primary">
+                            <i class="bi bi-eye"></i> View Order
+                        </a>
+                        <a th:href="@{/payments/order/{id}(id=${payment.orderId})}" class="btn btn-outline-info">
+                            <i class="bi bi-list"></i> View All Payments for Order
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes -->
+    <div th:if="${payment.notes}" class="card">
+        <div class="card-header">
+            <i class="bi bi-sticky"></i> <span th:text="#{payments.notes}">Notes</span>
+        </div>
+        <div class="card-body">
+            <p th:text="${payment.notes}">Payment notes...</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
