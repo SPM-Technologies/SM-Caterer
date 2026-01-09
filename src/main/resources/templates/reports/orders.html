@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{reports.orderReport}">Order Report</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0"><i class="bi bi-receipt"></i> <span th:text="#{reports.orderReport}">Order Report</span></h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}" th:text="#{nav.dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/reports}" th:text="#{reports.title}">Reports</a></li>
+                    <li class="breadcrumb-item active" th:text="#{reports.orderReport}">Order Report</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <a th:href="@{/reports/orders/export(status=${status}, customerId=${customerId}, eventTypeId=${eventTypeId}, fromDate=${fromDate}, toDate=${toDate})}"
+               class="btn btn-success">
+                <i class="bi bi-file-earmark-excel"></i> <span th:text="#{reports.exportExcel}">Export to Excel</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form th:action="@{/reports/orders}" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label" th:text="#{filter.status}">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="" th:text="#{filter.all}">All</option>
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${s == status}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" th:text="#{filter.customer}">Customer</label>
+                    <select name="customerId" class="form-select">
+                        <option value="" th:text="#{filter.all}">All</option>
+                        <option th:each="c : ${customers}" th:value="${c.id}" th:text="${c.name}" th:selected="${c.id == customerId}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" th:text="#{filter.eventType}">Event Type</label>
+                    <select name="eventTypeId" class="form-select">
+                        <option value="" th:text="#{filter.all}">All</option>
+                        <option th:each="e : ${eventTypes}" th:value="${e.id}" th:text="${e.code}" th:selected="${e.id == eventTypeId}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" th:text="#{filter.fromDate}">From Date</label>
+                    <input type="date" name="fromDate" class="form-control" th:value="${fromDate}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" th:text="#{filter.toDate}">To Date</label>
+                    <input type="date" name="toDate" class="form-control" th:value="${toDate}">
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="bi bi-search"></i> <span th:text="#{filter.apply}">Apply</span>
+                    </button>
+                    <a th:href="@{/reports/orders}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> <span th:text="#{filter.clear}">Clear</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-transparent">
+            <span th:text="#{reports.totalRecords}">Total Records</span>: <strong th:text="${totalItems}">0</strong>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th th:text="#{order.orderNumber}">Order #</th>
+                            <th th:text="#{order.customer}">Customer</th>
+                            <th th:text="#{order.phone}">Phone</th>
+                            <th th:text="#{order.eventDate}">Event Date</th>
+                            <th th:text="#{order.eventType}">Event Type</th>
+                            <th th:text="#{order.guests}">Guests</th>
+                            <th th:text="#{order.total}">Total</th>
+                            <th th:text="#{order.paid}">Paid</th>
+                            <th th:text="#{order.balance}">Balance</th>
+                            <th th:text="#{order.status}">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="order : ${orders}">
+                            <td>
+                                <a th:href="@{/orders/{id}(id=${order.id})}" th:text="${order.orderNumber}" class="text-decoration-none fw-semibold"></a>
+                            </td>
+                            <td th:text="${order.customerName}">-</td>
+                            <td th:text="${order.customerPhone}">-</td>
+                            <td th:text="${order.eventDate != null ? #temporals.format(order.eventDate, 'dd-MM-yyyy') : '-'}">-</td>
+                            <td th:text="${order.eventTypeName}">-</td>
+                            <td th:text="${order.guestCount}">0</td>
+                            <td class="text-end" th:text="${#numbers.formatDecimal(order.grandTotal ?: 0, 1, 'COMMA', 0, 'POINT')}">0</td>
+                            <td class="text-end" th:text="${#numbers.formatDecimal(order.advanceAmount ?: 0, 1, 'COMMA', 0, 'POINT')}">0</td>
+                            <td class="text-end" th:classappend="${order.balanceAmount > 0 ? 'text-danger fw-bold' : ''}"
+                                th:text="${#numbers.formatDecimal(order.balanceAmount ?: 0, 1, 'COMMA', 0, 'POINT')}">0</td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${order.status == 'CONFIRMED' ? 'bg-success' :
+                                                      (order.status == 'PENDING' ? 'bg-warning text-dark' :
+                                                      (order.status == 'CANCELLED' ? 'bg-danger' :
+                                                      (order.status == 'COMPLETED' ? 'bg-info' : 'bg-secondary')))}"
+                                      th:text="${order.status}">-</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(orders)}">
+                            <td colspan="10" class="text-center py-4 text-muted">
+                                <i class="bi bi-inbox fs-3"></i>
+                                <p class="mb-0 mt-2" th:text="#{reports.noData}">No data found</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div th:replace="~{fragments/pagination :: pagination(baseUrl='/reports/orders', currentPage=${currentPage}, totalPages=${totalPages}, pageSize=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir})}"></div>
+</div>
+</body>
+</html>

@@ -104,4 +104,66 @@ public interface CustomerRepository extends BaseRepository<Customer, Long> {
      * Counts customers by tenant and status.
      */
     long countByTenantIdAndStatus(Long tenantId, Status status);
+
+    // =====================================================
+    // PHASE 6: CUSTOMER REPORT QUERIES
+    // =====================================================
+
+    /**
+     * Finds customers for report with order statistics.
+     */
+    @Query("SELECT c FROM Customer c WHERE c.tenant.id = :tenantId " +
+           "AND (:status IS NULL OR c.status = :status) " +
+           "AND c.deletedAt IS NULL " +
+           "ORDER BY c.name")
+    Page<Customer> findCustomersForReport(@Param("tenantId") Long tenantId,
+                                          @Param("status") Status status,
+                                          Pageable pageable);
+
+    /**
+     * Gets customer order statistics (count, total value, total paid).
+     */
+    @Query("SELECT c.id, COUNT(o), COALESCE(SUM(o.grandTotal), 0), " +
+           "COALESCE(SUM(o.advanceAmount), 0), COALESCE(SUM(o.balanceAmount), 0) " +
+           "FROM Customer c LEFT JOIN Order o ON o.customer.id = c.id " +
+           "AND o.status NOT IN ('CANCELLED', 'DRAFT') AND o.deletedAt IS NULL " +
+           "WHERE c.tenant.id = :tenantId AND c.deletedAt IS NULL " +
+           "GROUP BY c.id")
+    List<Object[]> getCustomerOrderStats(@Param("tenantId") Long tenantId);
+
+    /**
+     * Gets top customers by order value.
+     */
+    @Query("SELECT c.id, c.name, COUNT(o), COALESCE(SUM(o.grandTotal), 0) " +
+           "FROM Customer c JOIN Order o ON o.customer.id = c.id " +
+           "WHERE c.tenant.id = :tenantId " +
+           "AND o.status NOT IN ('CANCELLED', 'DRAFT') AND o.deletedAt IS NULL " +
+           "AND c.deletedAt IS NULL " +
+           "GROUP BY c.id, c.name " +
+           "ORDER BY SUM(o.grandTotal) DESC")
+    List<Object[]> getTopCustomersByValue(@Param("tenantId") Long tenantId, Pageable pageable);
+
+    /**
+     * Gets customers with pending balances.
+     */
+    @Query("SELECT c, COALESCE(SUM(o.balanceAmount), 0) " +
+           "FROM Customer c JOIN Order o ON o.customer.id = c.id " +
+           "WHERE c.tenant.id = :tenantId " +
+           "AND o.balanceAmount > 0 " +
+           "AND o.status NOT IN ('CANCELLED', 'DRAFT') AND o.deletedAt IS NULL " +
+           "AND c.deletedAt IS NULL " +
+           "GROUP BY c " +
+           "HAVING SUM(o.balanceAmount) > 0 " +
+           "ORDER BY SUM(o.balanceAmount) DESC")
+    List<Object[]> getCustomersWithPendingBalance(@Param("tenantId") Long tenantId);
+
+    /**
+     * Counts new customers in date range.
+     */
+    @Query("SELECT COUNT(c) FROM Customer c WHERE c.tenant.id = :tenantId " +
+           "AND FUNCTION('DATE', c.createdAt) BETWEEN :startDate AND :endDate " +
+           "AND c.deletedAt IS NULL")
+    Long countNewCustomersInRange(@Param("tenantId") Long tenantId,
+                                  @Param("startDate") java.time.LocalDate startDate,
+                                  @Param("endDate") java.time.LocalDate endDate);
 }

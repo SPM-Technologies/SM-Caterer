@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{reports.stockReport}">Stock Report</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0"><i class="bi bi-box-seam"></i> <span th:text="#{reports.stockReport}">Stock Report</span></h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}" th:text="#{nav.dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/reports}" th:text="#{reports.title}">Reports</a></li>
+                    <li class="breadcrumb-item active" th:text="#{reports.stockReport}">Stock Report</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <a th:href="@{/reports/stock/export(materialGroupId=${materialGroupId}, status=${status}, stockStatus=${stockStatus})}"
+               class="btn btn-success">
+                <i class="bi bi-file-earmark-excel"></i> <span th:text="#{reports.exportExcel}">Export to Excel</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form th:action="@{/reports/stock}" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label" th:text="#{filter.materialGroup}">Material Group</label>
+                    <select name="materialGroupId" class="form-select">
+                        <option value="" th:text="#{filter.all}">All</option>
+                        <option th:each="g : ${materialGroups}" th:value="${g.id}" th:text="${g.code}" th:selected="${g.id == materialGroupId}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" th:text="#{filter.status}">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="" th:text="#{filter.all}">All</option>
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${s == status}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" th:text="#{filter.stockStatus}">Stock Status</label>
+                    <select name="stockStatus" class="form-select">
+                        <option value="" th:text="#{filter.all}">All</option>
+                        <option th:each="ss : ${stockStatuses}" th:value="${ss}" th:text="${ss}" th:selected="${ss == stockStatus}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="bi bi-search"></i> <span th:text="#{filter.apply}">Apply</span>
+                    </button>
+                    <a th:href="@{/reports/stock}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> <span th:text="#{filter.clear}">Clear</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-transparent">
+            <span th:text="#{reports.totalRecords}">Total Records</span>: <strong th:text="${totalItems}">0</strong>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th th:text="#{stock.code}">Code</th>
+                            <th th:text="#{stock.name}">Name</th>
+                            <th th:text="#{stock.group}">Group</th>
+                            <th th:text="#{stock.currentStock}">Current Stock</th>
+                            <th th:text="#{stock.minimum}">Minimum</th>
+                            <th th:text="#{stock.unit}">Unit</th>
+                            <th th:text="#{stock.costPerUnit}">Cost/Unit</th>
+                            <th th:text="#{stock.totalValue}">Total Value</th>
+                            <th th:text="#{stock.status}">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="stock : ${stocks}"
+                            th:classappend="${stock.stockStatus == 'OUT_OF_STOCK' ? 'table-danger' : (stock.stockStatus == 'LOW_STOCK' ? 'table-warning' : '')}">
+                            <td th:text="${stock.materialCode}">-</td>
+                            <td th:text="${stock.materialName}">-</td>
+                            <td th:text="${stock.groupName}">-</td>
+                            <td class="text-end" th:text="${#numbers.formatDecimal(stock.currentStock ?: 0, 1, 'COMMA', 2, 'POINT')}">0</td>
+                            <td class="text-end" th:text="${#numbers.formatDecimal(stock.minimumStock ?: 0, 1, 'COMMA', 2, 'POINT')}">0</td>
+                            <td th:text="${stock.unitSymbol}">-</td>
+                            <td class="text-end" th:text="${#numbers.formatDecimal(stock.costPerUnit ?: 0, 1, 'COMMA', 2, 'POINT')}">0</td>
+                            <td class="text-end fw-bold" th:text="${#numbers.formatDecimal(stock.totalValue ?: 0, 1, 'COMMA', 0, 'POINT')}">0</td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${stock.stockStatus == 'IN_STOCK' ? 'bg-success' :
+                                                      (stock.stockStatus == 'LOW_STOCK' ? 'bg-warning text-dark' : 'bg-danger')}"
+                                      th:text="${stock.stockStatus}">-</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(stocks)}">
+                            <td colspan="9" class="text-center py-4 text-muted">
+                                <i class="bi bi-inbox fs-3"></i>
+                                <p class="mb-0 mt-2" th:text="#{reports.noData}">No data found</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div th:replace="~{fragments/pagination :: pagination(baseUrl='/reports/stock', currentPage=${currentPage}, totalPages=${totalPages}, pageSize=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir})}"></div>
+</div>
+</body>
+</html>

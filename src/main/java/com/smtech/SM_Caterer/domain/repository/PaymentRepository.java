@@ -175,4 +175,68 @@ public interface PaymentRepository extends BaseRepository<Payment, Long> {
      * Counts payments by tenant and payment method.
      */
     long countByTenantIdAndPaymentMethod(Long tenantId, PaymentMethod paymentMethod);
+
+    // =====================================================
+    // PHASE 6: REPORT QUERIES
+    // =====================================================
+
+    /**
+     * Gets payment method distribution for charts.
+     */
+    @Query("SELECT p.paymentMethod, COUNT(p), COALESCE(SUM(p.amount), 0) FROM Payment p " +
+           "WHERE p.tenant.id = :tenantId AND p.status = 'COMPLETED' AND p.deletedAt IS NULL " +
+           "GROUP BY p.paymentMethod")
+    List<Object[]> getPaymentMethodDistribution(@Param("tenantId") Long tenantId);
+
+    /**
+     * Gets monthly payment statistics.
+     */
+    @Query("SELECT FUNCTION('MONTH', p.paymentDate), FUNCTION('YEAR', p.paymentDate), COUNT(p), COALESCE(SUM(p.amount), 0) " +
+           "FROM Payment p WHERE p.tenant.id = :tenantId " +
+           "AND p.paymentDate >= :startDate AND p.status = 'COMPLETED' AND p.deletedAt IS NULL " +
+           "GROUP BY FUNCTION('YEAR', p.paymentDate), FUNCTION('MONTH', p.paymentDate) " +
+           "ORDER BY FUNCTION('YEAR', p.paymentDate), FUNCTION('MONTH', p.paymentDate)")
+    List<Object[]> getMonthlyPaymentStats(@Param("tenantId") Long tenantId, @Param("startDate") LocalDate startDate);
+
+    /**
+     * Searches payments for report with filters.
+     */
+    @Query("SELECT p FROM Payment p JOIN FETCH p.order o JOIN FETCH o.customer " +
+           "WHERE p.tenant.id = :tenantId " +
+           "AND (:status IS NULL OR p.status = :status) " +
+           "AND (:method IS NULL OR p.paymentMethod = :method) " +
+           "AND (:customerId IS NULL OR o.customer.id = :customerId) " +
+           "AND (:fromDate IS NULL OR p.paymentDate >= :fromDate) " +
+           "AND (:toDate IS NULL OR p.paymentDate <= :toDate) " +
+           "AND p.deletedAt IS NULL " +
+           "ORDER BY p.paymentDate DESC")
+    Page<Payment> findPaymentsForReport(@Param("tenantId") Long tenantId,
+                                        @Param("status") PaymentStatus status,
+                                        @Param("method") PaymentMethod method,
+                                        @Param("customerId") Long customerId,
+                                        @Param("fromDate") LocalDate fromDate,
+                                        @Param("toDate") LocalDate toDate,
+                                        Pageable pageable);
+
+    /**
+     * Gets total completed payments for tenant.
+     */
+    @Query("SELECT COALESCE(SUM(p.amount), 0) FROM Payment p WHERE p.tenant.id = :tenantId " +
+           "AND p.status = 'COMPLETED' AND p.deletedAt IS NULL")
+    java.math.BigDecimal getTotalCompletedPayments(@Param("tenantId") Long tenantId);
+
+    /**
+     * Counts payments by date.
+     */
+    @Query("SELECT COUNT(p) FROM Payment p WHERE p.tenant.id = :tenantId " +
+           "AND p.paymentDate = :date AND p.deletedAt IS NULL")
+    Long countPaymentsByDate(@Param("tenantId") Long tenantId, @Param("date") LocalDate date);
+
+    /**
+     * Finds recent payments for dashboard.
+     */
+    @Query("SELECT p FROM Payment p JOIN FETCH p.order o JOIN FETCH o.customer " +
+           "WHERE p.tenant.id = :tenantId AND p.deletedAt IS NULL " +
+           "ORDER BY p.createdAt DESC")
+    List<Payment> findRecentPayments(@Param("tenantId") Long tenantId, Pageable pageable);
 }

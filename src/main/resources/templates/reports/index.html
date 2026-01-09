@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{reports.title}">Reports</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0"><i class="bi bi-file-earmark-bar-graph"></i> <span th:text="#{reports.title}">Reports</span></h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}" th:text="#{nav.dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" th:text="#{reports.title}">Reports</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Report Cards -->
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="bg-primary bg-opacity-10 p-4 rounded-circle d-inline-block mb-3">
+                        <i class="bi bi-receipt text-primary fs-1"></i>
+                    </div>
+                    <h5 class="card-title" th:text="#{reports.orderReport}">Order Report</h5>
+                    <p class="text-muted" th:text="#{reports.orderReportDesc}">View and export order details with various filters</p>
+                    <a th:href="@{/reports/orders}" class="btn btn-primary">
+                        <i class="bi bi-eye"></i> <span th:text="#{reports.viewReport}">View Report</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="bg-success bg-opacity-10 p-4 rounded-circle d-inline-block mb-3">
+                        <i class="bi bi-credit-card text-success fs-1"></i>
+                    </div>
+                    <h5 class="card-title" th:text="#{reports.paymentReport}">Payment Report</h5>
+                    <p class="text-muted" th:text="#{reports.paymentReportDesc}">Track payments by date, method and status</p>
+                    <a th:href="@{/reports/payments}" class="btn btn-success">
+                        <i class="bi bi-eye"></i> <span th:text="#{reports.viewReport}">View Report</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="bg-warning bg-opacity-10 p-4 rounded-circle d-inline-block mb-3">
+                        <i class="bi bi-box-seam text-warning fs-1"></i>
+                    </div>
+                    <h5 class="card-title" th:text="#{reports.stockReport}">Stock Report</h5>
+                    <p class="text-muted" th:text="#{reports.stockReportDesc}">Monitor inventory levels and stock value</p>
+                    <a th:href="@{/reports/stock}" class="btn btn-warning">
+                        <i class="bi bi-eye"></i> <span th:text="#{reports.viewReport}">View Report</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="bg-info bg-opacity-10 p-4 rounded-circle d-inline-block mb-3">
+                        <i class="bi bi-people text-info fs-1"></i>
+                    </div>
+                    <h5 class="card-title" th:text="#{reports.customerReport}">Customer Report</h5>
+                    <p class="text-muted" th:text="#{reports.customerReportDesc}">Customer details with order statistics</p>
+                    <a th:href="@{/reports/customers}" class="btn btn-info">
+                        <i class="bi bi-eye"></i> <span th:text="#{reports.viewReport}">View Report</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="bg-danger bg-opacity-10 p-4 rounded-circle d-inline-block mb-3">
+                        <i class="bi bi-exclamation-triangle text-danger fs-1"></i>
+                    </div>
+                    <h5 class="card-title" th:text="#{reports.pendingBalance}">Pending Balance</h5>
+                    <p class="text-muted" th:text="#{reports.pendingBalanceDesc}">Customers with outstanding balances</p>
+                    <a th:href="@{/reports/pending-balance}" class="btn btn-danger">
+                        <i class="bi bi-eye"></i> <span th:text="#{reports.viewReport}">View Report</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -219,6 +219,17 @@
 		</dependency>
 
 		<!-- ============================================ -->
+		<!-- PHASE 6: REPORTS & EXCEL EXPORT DEPENDENCIES -->
+		<!-- ============================================ -->
+
+		<!-- Excel Export - Apache POI -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.5</version>
+		</dependency>
+
+		<!-- ============================================ -->
 		<!-- TEST DEPENDENCIES -->
 		<!-- ============================================ -->
 

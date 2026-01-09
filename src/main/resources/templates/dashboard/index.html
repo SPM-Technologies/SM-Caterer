@@ -5,6 +5,26 @@
       layout:decorate="~{layouts/main}">
 <head>
     <title th:text="#{dashboard.title}">Dashboard</title>
+    <th:block layout:fragment="styles">
+        <style>
+            .metric-card {
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+            .metric-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+            .event-badge {
+                font-size: 0.75rem;
+            }
+            .low-stock-critical {
+                border-left: 4px solid #dc3545;
+            }
+            .low-stock-warning {
+                border-left: 4px solid #ffc107;
+            }
+        </style>
+    </th:block>
 </head>
 <body>
 <div layout:fragment="content">
@@ -21,77 +41,77 @@
         <div>
             <span class="text-muted" th:text="#{dashboard.welcome}">Welcome,</span>
             <strong sec:authentication="principal.fullName">User</strong>
+            <button class="btn btn-sm btn-outline-secondary ms-2" onclick="refreshDashboard()" title="Refresh">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
         </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="row g-4 mb-4">
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100">
+    <!-- Today's Metrics -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm metric-card h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
                             <div class="bg-primary bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-box-seam text-primary fs-4"></i>
+                                <i class="bi bi-receipt text-primary fs-4"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1" th:text="#{dashboard.materials}">Materials</h6>
-                            <h3 class="mb-0" th:text="${stats?.materialsCount ?: 0}">0</h3>
+                            <small class="text-muted" th:text="#{dashboard.todayOrders}">Today's Orders</small>
+                            <h3 class="mb-0" th:text="${metrics?.todayOrderCount ?: 0}">0</h3>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm metric-card h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
                             <div class="bg-success bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-card-list text-success fs-4"></i>
+                                <i class="bi bi-currency-rupee text-success fs-4"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1" th:text="#{dashboard.menus}">Menus</h6>
-                            <h3 class="mb-0" th:text="${stats?.menusCount ?: 0}">0</h3>
+                            <small class="text-muted" th:text="#{dashboard.todayRevenue}">Today's Revenue</small>
+                            <h3 class="mb-0" th:text="${#numbers.formatDecimal(metrics?.todayOrderValue ?: 0, 1, 'COMMA', 0, 'POINT')}">0</h3>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-warning bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-calendar-event text-warning fs-4"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1" th:text="#{dashboard.eventTypes}">Event Types</h6>
-                            <h3 class="mb-0" th:text="${stats?.eventTypesCount ?: 0}">0</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm metric-card h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
                             <div class="bg-info bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-rulers text-info fs-4"></i>
+                                <i class="bi bi-credit-card text-info fs-4"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1" th:text="#{dashboard.units}">Units</h6>
-                            <h3 class="mb-0" th:text="${stats?.unitsCount ?: 0}">0</h3>
+                            <small class="text-muted" th:text="#{dashboard.todayPayments}">Today's Payments</small>
+                            <h3 class="mb-0" th:text="${#numbers.formatDecimal(metrics?.todayPaymentValue ?: 0, 1, 'COMMA', 0, 'POINT')}">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm metric-card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 p-3 rounded">
+                                <i class="bi bi-exclamation-triangle text-warning fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <small class="text-muted" th:text="#{dashboard.pendingBalance}">Pending Balance</small>
+                            <h3 class="mb-0" th:text="${#numbers.formatDecimal(metrics?.totalPendingPayments ?: 0, 1, 'COMMA', 0, 'POINT')}">0</h3>
                         </div>
                     </div>
                 </div>
@@ -99,72 +119,197 @@
         </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="row g-4" sec:authorize="hasAnyRole('SUPER_ADMIN', 'TENANT_ADMIN', 'MANAGER')">
-        <div class="col-12">
+    <!-- Monthly Summary & Quick Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-calendar-month text-primary fs-2"></i>
+                    <h4 class="mt-2 mb-0" th:text="${metrics?.monthOrderCount ?: 0}">0</h4>
+                    <small class="text-muted" th:text="#{dashboard.monthOrders}">This Month's Orders</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-graph-up-arrow text-success fs-2"></i>
+                    <h4 class="mt-2 mb-0" th:text="${#numbers.formatDecimal(metrics?.monthRevenue ?: 0, 1, 'COMMA', 0, 'POINT')}">0</h4>
+                    <small class="text-muted" th:text="#{dashboard.monthRevenue}">This Month's Revenue</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-calendar-event text-info fs-2"></i>
+                    <h4 class="mt-2 mb-0" th:text="${metrics?.upcomingEventsCount ?: 0}">0</h4>
+                    <small class="text-muted" th:text="#{dashboard.upcomingEvents}">Upcoming Events</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-box-seam text-danger fs-2"></i>
+                    <h4 class="mt-2 mb-0" th:text="${metrics?.lowStockItemCount ?: 0}">0</h4>
+                    <small class="text-muted" th:text="#{dashboard.lowStockItems}">Low Stock Items</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Row -->
+    <div class="row g-4">
+        <!-- Recent Orders -->
+        <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-clock-history"></i> <span th:text="#{dashboard.recentOrders}">Recent Orders</span>
+                    </h5>
+                    <a th:href="@{/orders}" class="btn btn-sm btn-outline-primary" th:text="#{dashboard.viewAll}">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th th:text="#{order.orderNumber}">Order #</th>
+                                    <th th:text="#{order.customer}">Customer</th>
+                                    <th th:text="#{order.eventDate}">Event Date</th>
+                                    <th th:text="#{order.total}">Total</th>
+                                    <th th:text="#{order.status}">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="order : ${recentOrders}" th:if="${recentOrders != null && !recentOrders.isEmpty()}">
+                                    <td>
+                                        <a th:href="@{/orders/{id}(id=${order.id})}" th:text="${order.orderNumber}" class="fw-semibold text-decoration-none">ORD-001</a>
+                                    </td>
+                                    <td th:text="${order.customerName}">Customer Name</td>
+                                    <td th:text="${order.eventDate != null ? #temporals.format(order.eventDate, 'dd-MM-yyyy') : '-'}">01-01-2024</td>
+                                    <td th:text="${#numbers.formatDecimal(order.grandTotal ?: 0, 1, 'COMMA', 0, 'POINT')}">0</td>
+                                    <td>
+                                        <span class="badge"
+                                              th:classappend="${order.status == 'CONFIRMED' ? 'bg-success' :
+                                                              (order.status == 'PENDING' ? 'bg-warning text-dark' :
+                                                              (order.status == 'CANCELLED' ? 'bg-danger' :
+                                                              (order.status == 'COMPLETED' ? 'bg-info' : 'bg-secondary')))}"
+                                              th:text="${order.status}">Status</span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${recentOrders == null || recentOrders.isEmpty()}">
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-3"></i>
+                                        <p class="mb-0 mt-2" th:text="#{dashboard.noOrders}">No recent orders</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Events -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-calendar-event"></i> <span th:text="#{dashboard.upcomingEvents}">Upcoming Events</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div th:each="event : ${upcomingEvents}" th:if="${upcomingEvents != null && !upcomingEvents.isEmpty()}"
+                         class="d-flex align-items-center border-bottom py-3">
+                        <div class="flex-shrink-0 text-center me-3" style="width: 60px;">
+                            <div class="bg-primary text-white rounded p-2">
+                                <div class="fw-bold" th:text="${event.eventDate != null ? #temporals.day(event.eventDate) : '-'}">01</div>
+                                <small th:text="${event.eventDate != null ? #temporals.monthNameShort(event.eventDate) : '-'}">Jan</small>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">
+                                <a th:href="@{/orders/{id}(id=${event.orderId})}" class="text-decoration-none" th:text="${event.orderNumber}">ORD-001</a>
+                                <span class="badge bg-info event-badge ms-2" th:text="${event.daysUntilEvent == 0 ? 'Today' : (event.daysUntilEvent == 1 ? 'Tomorrow' : event.daysUntilEvent + ' days')}">In 3 days</span>
+                            </h6>
+                            <small class="text-muted">
+                                <i class="bi bi-person"></i> <span th:text="${event.customerName}">Customer</span>
+                                <span class="mx-2">|</span>
+                                <i class="bi bi-people"></i> <span th:text="${event.guestCount}">100</span> <span th:text="#{dashboard.guests}">guests</span>
+                                <span th:if="${event.balance != null && event.balance > 0}" class="ms-2 text-danger">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span th:text="'Balance: ' + ${#numbers.formatDecimal(event.balance, 1, 'COMMA', 0, 'POINT')}">Balance: 5000</span>
+                                </span>
+                            </small>
+                        </div>
+                    </div>
+                    <div th:if="${upcomingEvents == null || upcomingEvents.isEmpty()}" class="text-center text-muted py-4">
+                        <i class="bi bi-calendar-x fs-3"></i>
+                        <p class="mb-0 mt-2" th:text="#{dashboard.noUpcomingEvents}">No upcoming events</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="col-lg-4">
+            <!-- Low Stock Alerts -->
+            <div class="card border-0 shadow-sm mb-4" th:if="${lowStockAlerts != null && !lowStockAlerts.isEmpty()}">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-danger">
+                        <i class="bi bi-exclamation-triangle"></i> <span th:text="#{dashboard.lowStockAlerts}">Low Stock Alerts</span>
+                    </h5>
+                    <a th:href="@{/reports/stock(stockStatus='LOW_STOCK')}" class="btn btn-sm btn-outline-danger" th:text="#{dashboard.viewAll}">View All</a>
+                </div>
+                <div class="list-group list-group-flush">
+                    <div th:each="alert, stat : ${lowStockAlerts}" th:if="${stat.index < 5}"
+                         class="list-group-item"
+                         th:classappend="${alert.severity == 'CRITICAL' ? 'low-stock-critical' : 'low-stock-warning'}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0" th:text="${alert.materialName}">Material Name</h6>
+                                <small class="text-muted" th:text="${alert.groupName}">Group</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge" th:classappend="${alert.severity == 'CRITICAL' ? 'bg-danger' : 'bg-warning text-dark'}"
+                                      th:text="${alert.severity}">CRITICAL</span>
+                                <div class="small mt-1">
+                                    <span th:text="${#numbers.formatDecimal(alert.currentStock ?: 0, 1, 'COMMA', 2, 'POINT')}">0</span>
+                                    / <span th:text="${#numbers.formatDecimal(alert.minimumStock ?: 0, 1, 'COMMA', 2, 'POINT')}">10</span>
+                                    <span th:text="${alert.unitSymbol}">kg</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card border-0 shadow-sm mb-4" sec:authorize="hasAnyRole('SUPER_ADMIN', 'TENANT_ADMIN', 'MANAGER')">
                 <div class="card-header bg-transparent">
                     <h5 class="card-title mb-0">
                         <i class="bi bi-lightning"></i> <span th:text="#{dashboard.quickActions}">Quick Actions</span>
                     </h5>
                 </div>
                 <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-4 col-lg-2">
-                            <a th:href="@{/masters/units/new}" class="btn btn-outline-primary w-100">
-                                <i class="bi bi-plus-circle"></i><br>
-                                <small th:text="#{dashboard.addUnit}">Add Unit</small>
-                            </a>
-                        </div>
-                        <div class="col-md-4 col-lg-2">
-                            <a th:href="@{/masters/materials/new}" class="btn btn-outline-success w-100">
-                                <i class="bi bi-plus-circle"></i><br>
-                                <small th:text="#{dashboard.addMaterial}">Add Material</small>
-                            </a>
-                        </div>
-                        <div class="col-md-4 col-lg-2">
-                            <a th:href="@{/masters/menus/new}" class="btn btn-outline-warning w-100">
-                                <i class="bi bi-plus-circle"></i><br>
-                                <small th:text="#{dashboard.addMenu}">Add Menu</small>
-                            </a>
-                        </div>
-                        <div class="col-md-4 col-lg-2">
-                            <a th:href="@{/masters/event-types/new}" class="btn btn-outline-info w-100">
-                                <i class="bi bi-plus-circle"></i><br>
-                                <small th:text="#{dashboard.addEventType}">Add Event Type</small>
-                            </a>
-                        </div>
-                        <div class="col-md-4 col-lg-2">
-                            <a th:href="@{/masters/units}" class="btn btn-outline-secondary w-100">
-                                <i class="bi bi-list"></i><br>
-                                <small th:text="#{dashboard.viewAll}">View All Masters</small>
-                            </a>
-                        </div>
+                    <div class="d-grid gap-2">
+                        <a th:href="@{/orders/wizard/new}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> <span th:text="#{dashboard.newOrder}">New Order</span>
+                        </a>
+                        <a th:href="@{/customers/new}" class="btn btn-outline-primary">
+                            <i class="bi bi-person-plus"></i> <span th:text="#{dashboard.addCustomer}">Add Customer</span>
+                        </a>
+                        <a th:href="@{/payments/new}" class="btn btn-outline-success">
+                            <i class="bi bi-credit-card"></i> <span th:text="#{dashboard.recordPayment}">Record Payment</span>
+                        </a>
+                        <a th:href="@{/reports}" class="btn btn-outline-secondary">
+                            <i class="bi bi-file-earmark-bar-graph"></i> <span th:text="#{dashboard.viewReports}">View Reports</span>
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Recent Activity (Placeholder) -->
-    <div class="row g-4 mt-2">
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-clock-history"></i> <span th:text="#{dashboard.recentActivity}">Recent Activity</span>
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="text-center text-muted py-5">
-                        <i class="bi bi-inbox fs-1"></i>
-                        <p class="mt-2" th:text="#{dashboard.noActivity}">No recent activity to display</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
+            <!-- Account Info -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent">
                     <h5 class="card-title mb-0">
@@ -190,6 +335,77 @@
             </div>
         </div>
     </div>
+
+    <!-- Master Data Stats (Legacy) -->
+    <div class="row g-4 mt-2">
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded me-3">
+                        <i class="bi bi-box-seam text-primary fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1" th:text="#{dashboard.materials}">Materials</h6>
+                        <h4 class="mb-0" th:text="${stats?.materialsCount ?: 0}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 p-3 rounded me-3">
+                        <i class="bi bi-card-list text-success fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1" th:text="#{dashboard.menus}">Menus</h6>
+                        <h4 class="mb-0" th:text="${stats?.menusCount ?: 0}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-warning bg-opacity-10 p-3 rounded me-3">
+                        <i class="bi bi-calendar-event text-warning fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1" th:text="#{dashboard.eventTypes}">Event Types</h6>
+                        <h4 class="mb-0" th:text="${stats?.eventTypesCount ?: 0}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-info bg-opacity-10 p-3 rounded me-3">
+                        <i class="bi bi-rulers text-info fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1" th:text="#{dashboard.units}">Units</h6>
+                        <h4 class="mb-0" th:text="${stats?.unitsCount ?: 0}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        function refreshDashboard() {
+            fetch('/api/dashboard/refresh')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error refreshing dashboard:', error));
+        }
+    </script>
+</th:block>
 </body>
 </html>

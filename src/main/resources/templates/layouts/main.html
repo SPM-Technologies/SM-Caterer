@@ -63,6 +63,19 @@
                             <li><a class="dropdown-item" th:href="@{/masters/upi-qr}"><i class="bi bi-qr-code"></i> <span th:text="#{nav.upiQr}">UPI QR Codes</span></a></li>
                         </ul>
                     </li>
+                    <li class="nav-item dropdown" sec:authorize="hasAnyRole('SUPER_ADMIN', 'TENANT_ADMIN', 'MANAGER')">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/reports')} ? 'active' : ''">
+                            <i class="bi bi-file-earmark-bar-graph"></i> <span th:text="#{nav.reports}">Reports</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/reports/orders}"><i class="bi bi-receipt"></i> <span th:text="#{nav.orderReport}">Order Report</span></a></li>
+                            <li><a class="dropdown-item" th:href="@{/reports/payments}"><i class="bi bi-credit-card"></i> <span th:text="#{nav.paymentReport}">Payment Report</span></a></li>
+                            <li><a class="dropdown-item" th:href="@{/reports/stock}"><i class="bi bi-box-seam"></i> <span th:text="#{nav.stockReport}">Stock Report</span></a></li>
+                            <li><a class="dropdown-item" th:href="@{/reports/customers}"><i class="bi bi-people"></i> <span th:text="#{nav.customerReport}">Customer Report</span></a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{/reports/pending-balance}"><i class="bi bi-exclamation-triangle"></i> <span th:text="#{nav.pendingBalance}">Pending Balance</span></a></li>
+                        </ul>
+                    </li>
                 </ul>
 
                 <!-- Right side navigation -->

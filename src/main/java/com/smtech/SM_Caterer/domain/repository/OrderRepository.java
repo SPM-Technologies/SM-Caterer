@@ -177,4 +177,126 @@ public interface OrderRepository extends BaseRepository<Order, Long> {
      */
     @Query("SELECT COUNT(o) FROM Order o WHERE o.tenant.id = :tenantId AND o.status = 'PENDING'")
     long countPendingApproval(@Param("tenantId") Long tenantId);
+
+    // =====================================================
+    // PHASE 6: DASHBOARD & REPORT QUERIES
+    // =====================================================
+
+    /**
+     * Counts orders created on a specific date.
+     */
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND FUNCTION('DATE', o.createdAt) = :date AND o.deletedAt IS NULL")
+    Long countOrdersByCreatedDate(@Param("tenantId") Long tenantId, @Param("date") LocalDate date);
+
+    /**
+     * Sums grand total of orders created on a specific date.
+     */
+    @Query("SELECT COALESCE(SUM(o.grandTotal), 0) FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND FUNCTION('DATE', o.createdAt) = :date AND o.deletedAt IS NULL")
+    java.math.BigDecimal sumOrderTotalByCreatedDate(@Param("tenantId") Long tenantId, @Param("date") LocalDate date);
+
+    /**
+     * Counts orders by month and year.
+     */
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND FUNCTION('MONTH', o.createdAt) = :month AND FUNCTION('YEAR', o.createdAt) = :year " +
+           "AND o.deletedAt IS NULL")
+    Long countOrdersByMonth(@Param("tenantId") Long tenantId, @Param("month") int month, @Param("year") int year);
+
+    /**
+     * Sums grand total by month and year.
+     */
+    @Query("SELECT COALESCE(SUM(o.grandTotal), 0) FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND FUNCTION('MONTH', o.createdAt) = :month AND FUNCTION('YEAR', o.createdAt) = :year " +
+           "AND o.deletedAt IS NULL")
+    java.math.BigDecimal sumOrderTotalByMonth(@Param("tenantId") Long tenantId, @Param("month") int month, @Param("year") int year);
+
+    /**
+     * Sums all pending balance amounts for tenant.
+     */
+    @Query("SELECT COALESCE(SUM(o.balanceAmount), 0) FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND o.balanceAmount > 0 AND o.status NOT IN ('CANCELLED', 'DRAFT') AND o.deletedAt IS NULL")
+    java.math.BigDecimal sumPendingBalance(@Param("tenantId") Long tenantId);
+
+    /**
+     * Counts orders with pending balance.
+     */
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND o.balanceAmount > 0 AND o.status NOT IN ('CANCELLED', 'DRAFT') AND o.deletedAt IS NULL")
+    Long countOrdersWithPendingBalance(@Param("tenantId") Long tenantId);
+
+    /**
+     * Finds upcoming events within date range.
+     */
+    @Query("SELECT o FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND o.eventDate BETWEEN :startDate AND :endDate " +
+           "AND o.status NOT IN ('CANCELLED', 'COMPLETED') " +
+           "AND o.deletedAt IS NULL " +
+           "ORDER BY o.eventDate ASC")
+    List<Order> findUpcomingEventsInRange(@Param("tenantId") Long tenantId,
+                                          @Param("startDate") LocalDate startDate,
+                                          @Param("endDate") LocalDate endDate);
+
+    /**
+     * Finds recent orders with pagination for dashboard.
+     */
+    @EntityGraph(attributePaths = {"customer", "eventType"})
+    @Query("SELECT o FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND o.deletedAt IS NULL ORDER BY o.createdAt DESC")
+    List<Order> findRecentOrders(@Param("tenantId") Long tenantId, Pageable pageable);
+
+    /**
+     * Gets order status distribution for charts.
+     */
+    @Query("SELECT o.status, COUNT(o) FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND o.deletedAt IS NULL GROUP BY o.status")
+    List<Object[]> getOrderStatusDistribution(@Param("tenantId") Long tenantId);
+
+    /**
+     * Gets monthly order statistics for the last N months.
+     */
+    @Query("SELECT FUNCTION('MONTH', o.createdAt), FUNCTION('YEAR', o.createdAt), COUNT(o), COALESCE(SUM(o.grandTotal), 0) " +
+           "FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND o.createdAt >= :startDate AND o.deletedAt IS NULL " +
+           "GROUP BY FUNCTION('YEAR', o.createdAt), FUNCTION('MONTH', o.createdAt) " +
+           "ORDER BY FUNCTION('YEAR', o.createdAt), FUNCTION('MONTH', o.createdAt)")
+    List<Object[]> getMonthlyOrderStats(@Param("tenantId") Long tenantId, @Param("startDate") java.time.LocalDateTime startDate);
+
+    /**
+     * Searches orders for report with filters.
+     */
+    @EntityGraph(attributePaths = {"customer", "eventType", "createdBy"})
+    @Query("SELECT o FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND (:status IS NULL OR o.status = :status) " +
+           "AND (:customerId IS NULL OR o.customer.id = :customerId) " +
+           "AND (:eventTypeId IS NULL OR o.eventType.id = :eventTypeId) " +
+           "AND (:fromDate IS NULL OR o.eventDate >= :fromDate) " +
+           "AND (:toDate IS NULL OR o.eventDate <= :toDate) " +
+           "AND o.deletedAt IS NULL " +
+           "ORDER BY o.eventDate DESC")
+    Page<Order> findOrdersForReport(@Param("tenantId") Long tenantId,
+                                    @Param("status") OrderStatus status,
+                                    @Param("customerId") Long customerId,
+                                    @Param("eventTypeId") Long eventTypeId,
+                                    @Param("fromDate") LocalDate fromDate,
+                                    @Param("toDate") LocalDate toDate,
+                                    Pageable pageable);
+
+    /**
+     * Gets total revenue for tenant.
+     */
+    @Query("SELECT COALESCE(SUM(o.grandTotal), 0) FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND o.status NOT IN ('CANCELLED', 'DRAFT') AND o.deletedAt IS NULL")
+    java.math.BigDecimal getTotalRevenue(@Param("tenantId") Long tenantId);
+
+    /**
+     * Gets total revenue by date range.
+     */
+    @Query("SELECT COALESCE(SUM(o.grandTotal), 0) FROM Order o WHERE o.tenant.id = :tenantId " +
+           "AND o.eventDate BETWEEN :startDate AND :endDate " +
+           "AND o.status NOT IN ('CANCELLED', 'DRAFT') AND o.deletedAt IS NULL")
+    java.math.BigDecimal getTotalRevenueByDateRange(@Param("tenantId") Long tenantId,
+                                                    @Param("startDate") LocalDate startDate,
+                                                    @Param("endDate") LocalDate endDate);
 }

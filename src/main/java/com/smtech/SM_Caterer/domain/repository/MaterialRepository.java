@@ -84,4 +84,82 @@ public interface MaterialRepository extends BaseRepository<Material, Long> {
      * Finds material by ID and tenant ID (tenant isolation).
      */
     Optional<Material> findByIdAndTenantId(Long id, Long tenantId);
+
+    // =====================================================
+    // PHASE 6: STOCK REPORT QUERIES
+    // =====================================================
+
+    /**
+     * Finds all active materials with full details for stock report.
+     */
+    @EntityGraph(attributePaths = {"materialGroup", "unit", "translations"})
+    @Query("SELECT m FROM Material m WHERE m.tenant.id = :tenantId " +
+           "AND m.status = 'ACTIVE' AND m.deletedAt IS NULL " +
+           "ORDER BY m.materialGroup.id, m.materialCode")
+    List<Material> findAllForStockReport(@Param("tenantId") Long tenantId);
+
+    /**
+     * Finds materials for stock report with pagination.
+     */
+    @EntityGraph(attributePaths = {"materialGroup", "unit"})
+    @Query("SELECT m FROM Material m WHERE m.tenant.id = :tenantId " +
+           "AND (:groupId IS NULL OR m.materialGroup.id = :groupId) " +
+           "AND (:status IS NULL OR m.status = :status) " +
+           "AND m.deletedAt IS NULL " +
+           "ORDER BY m.materialGroup.id, m.materialCode")
+    Page<Material> findMaterialsForReport(@Param("tenantId") Long tenantId,
+                                          @Param("groupId") Long groupId,
+                                          @Param("status") Status status,
+                                          Pageable pageable);
+
+    /**
+     * Counts low stock materials.
+     */
+    @Query("SELECT COUNT(m) FROM Material m WHERE m.tenant.id = :tenantId " +
+           "AND m.currentStock < m.minimumStock AND m.status = 'ACTIVE' AND m.deletedAt IS NULL")
+    Long countLowStockMaterials(@Param("tenantId") Long tenantId);
+
+    /**
+     * Counts out of stock materials.
+     */
+    @Query("SELECT COUNT(m) FROM Material m WHERE m.tenant.id = :tenantId " +
+           "AND m.currentStock <= 0 AND m.status = 'ACTIVE' AND m.deletedAt IS NULL")
+    Long countOutOfStockMaterials(@Param("tenantId") Long tenantId);
+
+    /**
+     * Gets total stock value for tenant.
+     */
+    @Query("SELECT COALESCE(SUM(m.currentStock * m.costPerUnit), 0) FROM Material m " +
+           "WHERE m.tenant.id = :tenantId AND m.status = 'ACTIVE' AND m.deletedAt IS NULL")
+    java.math.BigDecimal getTotalStockValue(@Param("tenantId") Long tenantId);
+
+    /**
+     * Gets stock value by material group.
+     */
+    @Query("SELECT m.materialGroup.id, COALESCE(SUM(m.currentStock * m.costPerUnit), 0) " +
+           "FROM Material m WHERE m.tenant.id = :tenantId " +
+           "AND m.status = 'ACTIVE' AND m.deletedAt IS NULL " +
+           "GROUP BY m.materialGroup.id")
+    List<Object[]> getStockValueByGroup(@Param("tenantId") Long tenantId);
+
+    /**
+     * Finds critical low stock materials (below 50% of minimum).
+     */
+    @EntityGraph(attributePaths = {"materialGroup", "unit"})
+    @Query("SELECT m FROM Material m WHERE m.tenant.id = :tenantId " +
+           "AND m.currentStock < (m.minimumStock * 0.5) " +
+           "AND m.status = 'ACTIVE' AND m.deletedAt IS NULL " +
+           "ORDER BY (m.currentStock / m.minimumStock) ASC")
+    List<Material> findCriticalLowStockMaterials(@Param("tenantId") Long tenantId);
+
+    /**
+     * Finds materials by stock status.
+     */
+    @EntityGraph(attributePaths = {"materialGroup", "unit"})
+    @Query("SELECT m FROM Material m WHERE m.tenant.id = :tenantId " +
+           "AND m.status = 'ACTIVE' AND m.deletedAt IS NULL " +
+           "AND ((:stockStatus = 'OUT_OF_STOCK' AND m.currentStock <= 0) " +
+           "OR (:stockStatus = 'LOW_STOCK' AND m.currentStock > 0 AND m.currentStock < m.minimumStock) " +
+           "OR (:stockStatus = 'IN_STOCK' AND m.currentStock >= m.minimumStock))")
+    List<Material> findByStockStatus(@Param("tenantId") Long tenantId, @Param("stockStatus") String stockStatus);
 }
