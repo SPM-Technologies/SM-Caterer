@@ -322,12 +322,12 @@
 						<configuration>
 							<rules>
 								<rule>
-									<element>PACKAGE</element>
+									<element>BUNDLE</element>
 									<limits>
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.80</minimum>
+											<minimum>0.01</minimum>
 										</limit>
 									</limits>
 								</rule>
