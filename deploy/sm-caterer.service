@@ -1,0 +1,68 @@
+# ===================================
+# SM-Caterer Systemd Service File
+# ===================================
+# Installation:
+#   sudo cp sm-caterer.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable sm-caterer
+#   sudo systemctl start sm-caterer
+# ===================================
+
+[Unit]
+Description=SM-Caterer Catering Management Application
+Documentation=https://github.com/your-org/sm-caterer
+After=network.target mysql.service
+Requires=mysql.service
+
+[Service]
+Type=simple
+User=cloudcaters
+Group=cloudcaters
+WorkingDirectory=/opt/cloudcaters
+
+# Environment file for sensitive configuration
+EnvironmentFile=/opt/cloudcaters/sm-caterer.env
+
+# Java application startup
+ExecStart=/usr/bin/java \
+    -Xms512m \
+    -Xmx1024m \
+    -XX:+UseG1GC \
+    -XX:MaxGCPauseMillis=200 \
+    -Djava.security.egd=file:/dev/./urandom \
+    -Dspring.profiles.active=prod \
+    -jar /opt/cloudcaters/app.war
+
+# Graceful shutdown
+ExecStop=/bin/kill -SIGTERM $MAINPID
+TimeoutStopSec=30
+KillMode=mixed
+
+# Restart policy
+Restart=on-failure
+RestartSec=10
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ReadWritePaths=/opt/cloudcaters/uploads /var/log/cloudcaters
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sm-caterer
+
+[Install]
+WantedBy=multi-user.target

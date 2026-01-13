@@ -2,12 +2,17 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven-3.9'    // Must match name in Jenkins > Manage Jenkins > Tools
-        jdk 'JDK-17'         // Must match name in Jenkins > Manage Jenkins > Tools
+        maven 'Maven-3.9'
+        jdk 'JDK-17'
+    }
+
+    environment {
+        APP_NAME = 'SM-Caterer'
+        ARTIFACT_NAME = 'SM-Caterer-0.0.1-SNAPSHOT.war'
     }
 
     stages {
-        
+
         stage('Checkout') {
             steps {
                 echo 'Checking out code from GitHub...'
@@ -18,7 +23,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Compiling the project...'
-                bat 'mvn clean compile'
+                bat 'mvn clean compile -DskipTests'
             }
         }
 
@@ -39,6 +44,18 @@ pipeline {
                 echo 'Generating coverage report...'
                 bat 'mvn jacoco:report'
             }
+            post {
+                always {
+                    publishHTML(target: [
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'target/site/jacoco',
+                        reportFiles: 'index.html',
+                        reportName: 'JaCoCo Coverage Report'
+                    ])
+                }
+            }
         }
 
         stage('Package') {
@@ -53,11 +70,28 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Verify') {
             steps {
-                echo 'Ready to deploy!'
-                echo 'WAR file location: target/SM-Caterer-0.0.1-SNAPSHOT.war'
-                // Add your deployment commands here later
+                echo 'Running verification checks...'
+                bat 'mvn verify -DskipTests'
+            }
+        }
+
+        stage('Deploy Info') {
+            steps {
+                echo '========================================='
+                echo 'DEPLOYMENT INFORMATION'
+                echo '========================================='
+                echo "Artifact: target/${ARTIFACT_NAME}"
+                echo ''
+                echo 'To deploy to production:'
+                echo '1. Copy WAR to server'
+                echo '2. Restart service: sudo systemctl restart cloudcaters'
+                echo '3. Verify health: curl http://server:8080/actuator/health'
+                echo ''
+                echo 'For production profile, use:'
+                echo '  java -jar app.war --spring.profiles.active=prod'
+                echo '========================================='
             }
         }
     }
@@ -65,9 +99,17 @@ pipeline {
     post {
         success {
             echo 'Build Successful!'
+            echo "Artifact ready: target/${ARTIFACT_NAME}"
         }
         failure {
             echo 'Build Failed!'
+        }
+        always {
+            cleanWs(cleanWhenNotBuilt: false,
+                    deleteDirs: true,
+                    disableDeferredWipeout: true,
+                    notFailBuild: true,
+                    patterns: [[pattern: 'target/**', type: 'EXCLUDE']])
         }
     }
 }
