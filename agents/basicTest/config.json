@@ -1,0 +1,187 @@
+{
+  "application": {
+    "baseUrl": "http://localhost:8080",
+    "loginUrl": "/login",
+    "credentials": {
+      "username": "testuser",
+      "password": "test123"
+    }
+  },
+  "pages": [
+    {
+      "name": "Dashboard",
+      "path": "/dashboard",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "core"
+    },
+    {
+      "name": "Profile",
+      "path": "/profile",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "core"
+    },
+    {
+      "name": "Units List",
+      "path": "/masters/units",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "masters"
+    },
+    {
+      "name": "Units New",
+      "path": "/masters/units/new",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "masters"
+    },
+    {
+      "name": "Materials List",
+      "path": "/masters/materials",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "masters"
+    },
+    {
+      "name": "Materials New",
+      "path": "/masters/materials/new",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "masters"
+    },
+    {
+      "name": "Menus List",
+      "path": "/masters/menus",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "masters"
+    },
+    {
+      "name": "Menus New",
+      "path": "/masters/menus/new",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "masters"
+    },
+    {
+      "name": "Event Types List",
+      "path": "/masters/event-types",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "masters"
+    },
+    {
+      "name": "Event Types New",
+      "path": "/masters/event-types/new",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "masters"
+    },
+    {
+      "name": "Recipes List",
+      "path": "/masters/recipes",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "masters"
+    },
+    {
+      "name": "Recipes New",
+      "path": "/masters/recipes/new",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "masters"
+    },
+    {
+      "name": "UPI QR List",
+      "path": "/masters/upi-qr",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "masters"
+    },
+    {
+      "name": "UPI QR New",
+      "path": "/masters/upi-qr/new",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "masters"
+    },
+    {
+      "name": "Orders List",
+      "path": "/orders",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "orders"
+    },
+    {
+      "name": "Order Wizard Step 1",
+      "path": "/orders/wizard/step1",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "orders"
+    },
+    {
+      "name": "Customers List",
+      "path": "/customers",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "customers"
+    },
+    {
+      "name": "Customers New",
+      "path": "/customers/new",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "customers"
+    },
+    {
+      "name": "Payments List",
+      "path": "/payments",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "payments"
+    },
+    {
+      "name": "Payments New",
+      "path": "/payments/new",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "payments"
+    },
+    {
+      "name": "Reports Index",
+      "path": "/reports",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "reports"
+    },
+    {
+      "name": "Order Report",
+      "path": "/reports/orders",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "reports"
+    },
+    {
+      "name": "Payment Report",
+      "path": "/reports/payments",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "reports"
+    },
+    {
+      "name": "Pending Balance Report",
+      "path": "/reports/pending-balance",
+      "expectedStatus": 200,
+      "requiresAuth": true,
+      "category": "reports"
+    },
+    {
+      "name": "Login Page",
+      "path": "/login",
+      "expectedStatus": 200,
+      "requiresAuth": false,
+      "category": "public"
+    }
+  ]
+}
