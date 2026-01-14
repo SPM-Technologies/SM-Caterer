@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{profile.title}">My Profile</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0"><i class="bi bi-person-circle"></i> <span th:text="#{profile.title}">My Profile</span></h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}" th:text="#{nav.dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" th:text="#{profile.title}">My Profile</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="row">
+        <!-- Profile Information -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="bi bi-person"></i> <span th:text="#{profile.information}">Profile Information</span></h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/profile/update}" method="post">
+                        <div class="mb-3">
+                            <label for="email" class="form-label" th:text="#{user.email}">Email</label>
+                            <input type="email" class="form-control" id="email" th:value="${user.email}" disabled>
+                            <small class="text-muted" th:text="#{profile.emailCannotChange}">Email cannot be changed</small>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName" class="form-label" th:text="#{user.firstName}">First Name</label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" th:value="${user.firstName}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName" class="form-label" th:text="#{user.lastName}">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" name="lastName" th:value="${user.lastName}" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label" th:text="#{user.phone}">Phone</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" th:value="${user.phone}">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> <span th:text="#{common.save}">Save Changes</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Password -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="bi bi-shield-lock"></i> <span th:text="#{profile.changePassword}">Change Password</span></h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/profile/change-password}" method="post">
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label" th:text="#{profile.currentPassword}">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label" th:text="#{profile.newPassword}">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" name="newPassword" required minlength="8">
+                            <small class="text-muted" th:text="#{profile.passwordHint}">Minimum 8 characters</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label" th:text="#{profile.confirmPassword}">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required minlength="8">
+                        </div>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-key"></i> <span th:text="#{profile.updatePassword}">Update Password</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Info -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> <span th:text="#{profile.accountInfo}">Account Information</span></h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1" th:text="#{user.role}">Role</p>
+                            <p class="fw-semibold">
+                                <span class="badge bg-primary" th:text="${user.role.name()}">ROLE</span>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1" th:text="#{user.status}">Status</p>
+                            <p class="fw-semibold">
+                                <span th:class="${user.status.name() == 'ACTIVE'} ? 'badge bg-success' : 'badge bg-secondary'" th:text="${user.status.name()}">STATUS</span>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1" th:text="#{user.createdAt}">Member Since</p>
+                            <p class="fw-semibold" th:text="${#temporals.format(user.createdAt, 'dd MMM yyyy')}">Date</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

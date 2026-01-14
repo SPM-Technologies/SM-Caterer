@@ -35,22 +35,22 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/dashboard}" th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/dashboard')} ? 'active' : ''">
+                        <a class="nav-link" th:href="@{/dashboard}" th:classappend="${#strings.startsWith(currentUri, '/dashboard')} ? 'active' : ''">
                             <i class="bi bi-speedometer2"></i> <span th:text="#{nav.dashboard}">Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/orders}" th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? 'active' : ''">
+                        <a class="nav-link" th:href="@{/orders}" th:classappend="${#strings.startsWith(currentUri, '/orders')} ? 'active' : ''">
                             <i class="bi bi-receipt"></i> <span th:text="#{nav.orders}">Orders</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/customers}" th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/customers')} ? 'active' : ''">
+                        <a class="nav-link" th:href="@{/customers}" th:classappend="${#strings.startsWith(currentUri, '/customers')} ? 'active' : ''">
                             <i class="bi bi-people"></i> <span th:text="#{nav.customers}">Customers</span>
                         </a>
                     </li>
                     <li class="nav-item dropdown" sec:authorize="hasAnyRole('SUPER_ADMIN', 'TENANT_ADMIN', 'MANAGER')">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/masters')} ? 'active' : ''">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" th:classappend="${#strings.startsWith(currentUri, '/masters')} ? 'active' : ''">
                             <i class="bi bi-database"></i> <span th:text="#{nav.masters}">Master Data</span>
                         </a>
                         <ul class="dropdown-menu">
@@ -64,7 +64,7 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown" sec:authorize="hasAnyRole('SUPER_ADMIN', 'TENANT_ADMIN', 'MANAGER')">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/reports')} ? 'active' : ''">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" th:classappend="${#strings.startsWith(currentUri, '/reports')} ? 'active' : ''">
                             <i class="bi bi-file-earmark-bar-graph"></i> <span th:text="#{nav.reports}">Reports</span>
                         </a>
                         <ul class="dropdown-menu">

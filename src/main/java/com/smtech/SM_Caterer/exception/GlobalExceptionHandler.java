@@ -31,7 +31,7 @@ import java.util.Map;
  * @since Phase 2
  */
 @Slf4j
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.smtech.SM_Caterer.API")
 public class GlobalExceptionHandler {
 
     // ==========================================

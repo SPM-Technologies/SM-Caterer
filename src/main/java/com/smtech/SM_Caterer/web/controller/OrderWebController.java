@@ -183,6 +183,11 @@ public class OrderWebController {
 
     // ===== Wizard Step 1: Customer Selection =====
 
+    @GetMapping("/wizard/new")
+    public String wizardNew() {
+        return "redirect:/orders/wizard/step1";
+    }
+
     @GetMapping("/wizard/step1")
     public String wizardStep1(@AuthenticationPrincipal CustomUserDetails userDetails,
                               HttpSession session,

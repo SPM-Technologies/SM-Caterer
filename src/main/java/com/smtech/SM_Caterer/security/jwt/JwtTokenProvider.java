@@ -3,7 +3,6 @@ package com.smtech.SM_Caterer.security.jwt;
 import com.smtech.SM_Caterer.config.JwtProperties;
 import com.smtech.SM_Caterer.security.CustomUserDetails;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import jakarta.annotation.PostConstruct;
@@ -14,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,12 +43,25 @@ public class JwtTokenProvider {
 
     @PostConstruct
     public void init() {
-        // Use a secure key for HS512
-        byte[] keyBytes = Decoders.BASE64.decode(
-            java.util.Base64.getEncoder().encodeToString(jwtProperties.getSecret().getBytes())
-        );
+        // Use a secure key for HS512 (minimum 512 bits = 64 bytes)
+        String secret = jwtProperties.getSecret();
+        if (secret == null || secret.isEmpty()) {
+            throw new IllegalStateException("JWT secret key is not configured!");
+        }
+
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+
+        // Ensure key is at least 64 bytes for HS512
+        if (keyBytes.length < 64) {
+            // Pad the key if it's too short (for development only)
+            byte[] paddedKey = new byte[64];
+            System.arraycopy(keyBytes, 0, paddedKey, 0, keyBytes.length);
+            keyBytes = paddedKey;
+            log.warn("JWT secret key is shorter than 64 bytes. Padding applied. Use a longer key in production!");
+        }
+
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
-        log.info("JWT Token Provider initialized");
+        log.info("JWT Token Provider initialized successfully");
     }
 
     /**

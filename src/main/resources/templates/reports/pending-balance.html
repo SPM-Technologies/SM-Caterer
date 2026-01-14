@@ -28,7 +28,7 @@
                 <div class="card-body text-center">
                     <h5 class="card-title" th:text="#{reports.totalPendingBalance}">Total Pending Balance</h5>
                     <h2 class="mb-0">
-                        <span th:text="${#numbers.formatDecimal(customers.stream().map(c -> c.totalBalance ?: 0).reduce(0, (a, b) -> a + b), 1, 'COMMA', 0, 'POINT')}">0</span>
+                        <span th:text="${#numbers.formatDecimal(#aggregates.sum(customers.![totalBalance]) ?: 0, 1, 'COMMA', 0, 'POINT')}">0</span>
                     </h2>
                     <small th:text="${#lists.size(customers)} + ' customers'">0 customers</small>
                 </div>

@@ -28,7 +28,7 @@ INSERT INTO users (
     1,
     'testuser',
     'testuser@smtech.com',
-    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhkO',
+    '$2a$10$OTOyU6dX9mdKx6w8YfwMf.ZYmqNNZnf5tr..A/k1bId1zjL7sPQ1y',
     'Test',
     'User',
     'TENANT_ADMIN',

@@ -12,6 +12,8 @@ import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 
 /**
@@ -71,7 +73,7 @@ public class Menu extends TenantBaseEntity {
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<RecipeItem> recipeItems = new ArrayList<>();
+    private Set<RecipeItem> recipeItems = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {
