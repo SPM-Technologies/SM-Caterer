@@ -6,10 +6,10 @@ import com.smtech.SM_Caterer.domain.enums.UserRole;
 import com.smtech.SM_Caterer.domain.enums.UserStatus;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -25,17 +25,18 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class UserDTO extends BaseDTO {
 
     // Tenant reference (ID only, not full object)
     private Long tenantId;
     private String tenantCode; // For display purposes
+    private String tenantName; // Business name for display
 
     @NotBlank(message = "Username is required")
     @Size(min = 3, max = 50, message = "Username must be 3-50 characters")
-    @Pattern(regexp = "^[a-z0-9._-]+$",
-             message = "Username must be lowercase alphanumeric with . _ -")
+    @Pattern(regexp = "^[a-zA-Z0-9._-]+$",
+             message = "Username must be alphanumeric with . _ -")
     private String username;
 
     @NotBlank(message = "Email is required")

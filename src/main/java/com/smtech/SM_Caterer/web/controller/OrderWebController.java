@@ -184,7 +184,11 @@ public class OrderWebController {
     // ===== Wizard Step 1: Customer Selection =====
 
     @GetMapping("/wizard/new")
-    public String wizardNew() {
+    public String wizardNew(HttpSession session) {
+        // Initialize fresh form to avoid stale session data
+        OrderFormDTO form = new OrderFormDTO();
+        form.setCurrentStep(1);
+        session.setAttribute(ORDER_FORM_KEY, form);
         return "redirect:/orders/wizard/step1";
     }
 

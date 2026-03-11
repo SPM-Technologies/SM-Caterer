@@ -4,6 +4,7 @@ import com.smtech.SM_Caterer.domain.entity.Tenant;
 import com.smtech.SM_Caterer.domain.enums.TenantStatus;
 import com.smtech.SM_Caterer.domain.repository.TenantRepository;
 import com.smtech.SM_Caterer.exception.DuplicateResourceException;
+import com.smtech.SM_Caterer.exception.ResourceNotFoundException;
 import com.smtech.SM_Caterer.service.TenantService;
 import com.smtech.SM_Caterer.service.base.BaseServiceImpl;
 import com.smtech.SM_Caterer.service.dto.TenantDTO;
@@ -64,6 +65,40 @@ public class TenantServiceImpl extends BaseServiceImpl<Tenant, TenantDTO, Long>
     }
 
     @Override
+    @Transactional
+    public TenantDTO update(Long id, TenantDTO dto) {
+        log.debug("Updating tenant ID: {}", id);
+
+        Tenant existingTenant = tenantRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Tenant", "id", id));
+
+        // Check email uniqueness (if changed)
+        if (dto.getEmail() != null && !dto.getEmail().equals(existingTenant.getEmail()) &&
+            tenantRepository.existsByEmail(dto.getEmail())) {
+            throw new DuplicateResourceException("Tenant", "email", dto.getEmail());
+        }
+
+        // Update fields (tenantCode is not updated - it's readonly)
+        existingTenant.setBusinessName(dto.getBusinessName());
+        existingTenant.setContactPerson(dto.getContactPerson());
+        existingTenant.setEmail(dto.getEmail());
+        existingTenant.setPhone(dto.getPhone());
+        existingTenant.setAddress(dto.getAddress());
+        existingTenant.setCity(dto.getCity());
+        existingTenant.setState(dto.getState());
+        existingTenant.setPincode(dto.getPincode());
+        existingTenant.setGstin(dto.getGstin());
+        existingTenant.setStatus(dto.getStatus());
+        existingTenant.setSubscriptionStartDate(dto.getSubscriptionStartDate());
+        existingTenant.setSubscriptionEndDate(dto.getSubscriptionEndDate());
+
+        Tenant updatedTenant = tenantRepository.save(existingTenant);
+        log.info("Tenant updated (ID: {})", updatedTenant.getId());
+
+        return tenantMapper.toDto(updatedTenant);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Optional<TenantDTO> findByTenantCode(String tenantCode) {
         return tenantRepository.findByTenantCode(tenantCode)
@@ -99,5 +134,24 @@ public class TenantServiceImpl extends BaseServiceImpl<Tenant, TenantDTO, Long>
     public Page<TenantDTO> findAllActive(Pageable pageable) {
         return tenantRepository.findAllActive(pageable)
                 .map(tenantMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<TenantDTO> findByStatus(TenantStatus status, Pageable pageable) {
+        return tenantRepository.findByStatus(status, pageable)
+                .map(tenantMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countAll() {
+        return tenantRepository.count();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countByStatus(TenantStatus status) {
+        return tenantRepository.countByStatus(status);
     }
 }

@@ -18,24 +18,24 @@
     <!-- Order Info Card -->
     <div th:if="${order}" class="card mb-4 border-primary">
         <div class="card-header bg-primary text-white">
-            <i class="bi bi-receipt"></i> Order Details
+            <i class="bi bi-receipt"></i> <span th:text="#{payments.orderDetails}">Order Details</span>
         </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-3">
-                    <strong>Order Number:</strong>
+                    <strong th:text="#{payments.orderNumber} + ':'">Order Number:</strong>
                     <p th:text="${order.orderNumber}">ORD-001</p>
                 </div>
                 <div class="col-md-3">
-                    <strong>Customer:</strong>
+                    <strong th:text="#{payments.customer} + ':'">Customer:</strong>
                     <p th:text="${order.customerName}">Customer Name</p>
                 </div>
                 <div class="col-md-3">
-                    <strong>Order Total:</strong>
+                    <strong th:text="#{payments.orderTotal} + ':'">Order Total:</strong>
                     <p class="text-primary fw-bold" th:text="${#numbers.formatCurrency(order.totalAmount)}">10,000.00</p>
                 </div>
                 <div class="col-md-3">
-                    <strong>Balance Due:</strong>
+                    <strong th:text="#{payments.balanceDue} + ':'">Balance Due:</strong>
                     <p class="text-danger fw-bold" th:text="${#numbers.formatCurrency(balanceDue)}">5,000.00</p>
                 </div>
             </div>
@@ -65,7 +65,7 @@
                         <div th:if="${#fields.hasErrors('amount')}" class="invalid-feedback d-block"
                              th:errors="*{amount}">Error</div>
                         <small th:if="${balanceDue}" class="text-muted">
-                            Maximum: <span th:text="${#numbers.formatCurrency(balanceDue)}">5,000.00</span>
+                            <span th:text="#{payments.maximum}">Maximum</span>: <span th:text="${#numbers.formatCurrency(balanceDue)}">5,000.00</span>
                         </small>
                     </div>
                 </div>
@@ -93,12 +93,12 @@
                     <div class="col-md-6">
                         <label class="form-label" th:text="#{payments.transactionReference}">Transaction Reference</label>
                         <input type="text" class="form-control" th:field="*{transactionReference}" maxlength="100">
-                        <small class="text-muted">Optional: UTR number, cheque number, etc.</small>
+                        <small class="text-muted" th:text="#{payments.transRefHint}">Optional: UTR number, cheque number, etc.</small>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" th:text="#{payments.upiId}">UPI ID</label>
                         <input type="text" class="form-control" th:field="*{upiId}" maxlength="100">
-                        <small class="text-muted">Optional: Payer's UPI ID for UPI payments</small>
+                        <small class="text-muted" th:text="#{payments.upiIdHint}">Optional: Payer's UPI ID for UPI payments</small>
                     </div>
                 </div>
 

@@ -76,4 +76,41 @@ public interface UserService extends BaseService<UserDTO, Long> {
      * @param userId User ID
      */
     void unlockAccount(Long userId);
+
+    /**
+     * Counts total number of users.
+     * @return Total count
+     */
+    long countAll();
+
+    /**
+     * Finds all users with optional filters (for admin).
+     * @param tenantId Optional tenant filter
+     * @param role Optional role filter
+     * @param status Optional status filter
+     * @param pageable Pagination parameters
+     * @return Page of users
+     */
+    Page<UserDTO> findAllUsers(Long tenantId, UserRole role, UserStatus status, Pageable pageable);
+
+    /**
+     * Creates a new user (admin function).
+     * @param userDTO User data
+     * @return Created user
+     */
+    UserDTO createUser(UserDTO userDTO);
+
+    /**
+     * Updates a user (admin function).
+     * @param id User ID
+     * @param userDTO User data
+     * @return Updated user
+     */
+    UserDTO updateUser(Long id, UserDTO userDTO);
+
+    /**
+     * Deletes a user (admin function).
+     * @param id User ID
+     */
+    void deleteUser(Long id);
 }

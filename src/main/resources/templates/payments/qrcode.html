@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{payments.qrCode}">UPI QR Code</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-qr-code"></i>
+                <span th:text="#{payments.qrCode}">UPI QR Code</span>
+            </h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}" th:text="#{nav.dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/payments}" th:text="#{nav.payments}">Payments</a></li>
+                    <li class="breadcrumb-item active" th:text="#{payments.qrCode}">QR Code</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> <span th:text="#{common.back}">Back to Order</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Order Summary -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0"><i class="bi bi-receipt"></i> Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless mb-0">
+                        <tr>
+                            <th width="40%">Order Number:</th>
+                            <td>
+                                <a th:href="@{/orders/{id}(id=${order.id})}" th:text="${order.orderNumber}">ORD-001</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Customer:</th>
+                            <td th:text="${order.customerName}">Customer Name</td>
+                        </tr>
+                        <tr>
+                            <th>Grand Total:</th>
+                            <td class="fw-bold" th:text="${#numbers.formatCurrency(order.grandTotal)}">10,000.00</td>
+                        </tr>
+                        <tr>
+                            <th>Total Paid:</th>
+                            <td class="text-success" th:text="${#numbers.formatCurrency(totalPaid)}">5,000.00</td>
+                        </tr>
+                        <tr>
+                            <th>Balance Due:</th>
+                            <td class="fw-bold" th:classappend="${balanceDue > 0} ? 'text-danger' : 'text-success'"
+                                th:text="${#numbers.formatCurrency(balanceDue)}">5,000.00</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Record Payment Link -->
+            <div class="d-grid gap-2">
+                <a th:href="@{/payments/new(orderId=${order.id})}" class="btn btn-success">
+                    <i class="bi bi-credit-card"></i> Record Payment
+                </a>
+                <a th:href="@{/payments/order/{id}(id=${order.id})}" class="btn btn-outline-primary">
+                    <i class="bi bi-list"></i> View All Payments
+                </a>
+            </div>
+        </div>
+
+        <!-- QR Code Section -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0"><i class="bi bi-qr-code"></i> Generate UPI QR Code</h5>
+                </div>
+                <div class="card-body">
+                    <div id="qrForm">
+                        <div class="mb-3">
+                            <label class="form-label">UPI ID</label>
+                            <input type="text" class="form-control" id="upiId" placeholder="merchant@upi">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Payee Name</label>
+                            <input type="text" class="form-control" id="payeeName" placeholder="Business Name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="qrAmount"
+                                   th:value="${balanceDue}" step="0.01" min="0">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Note</label>
+                            <input type="text" class="form-control" id="qrNote"
+                                   th:value="'Payment for Order ' + ${order.orderNumber}">
+                        </div>
+                        <button type="button" class="btn btn-primary w-100" onclick="generateQrCode()">
+                            <i class="bi bi-qr-code"></i> Generate QR Code
+                        </button>
+                    </div>
+
+                    <!-- QR Code Display -->
+                    <div id="qrResult" class="text-center mt-4" style="display: none;">
+                        <img id="qrImage" class="img-fluid border rounded p-3" style="max-width: 300px;" alt="UPI QR Code">
+                        <div class="mt-3">
+                            <a id="upiLink" href="#" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-phone"></i> Open in UPI App
+                            </a>
+                        </div>
+                    </div>
+
+                    <div id="qrError" class="alert alert-danger mt-3" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        function generateQrCode() {
+            var upiId = document.getElementById('upiId').value;
+            var payeeName = document.getElementById('payeeName').value;
+            var amount = document.getElementById('qrAmount').value;
+            var note = document.getElementById('qrNote').value;
+
+            if (!upiId || !payeeName || !amount) {
+                document.getElementById('qrError').textContent = 'Please fill UPI ID, Payee Name, and Amount.';
+                document.getElementById('qrError').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('qrError').style.display = 'none';
+
+            var csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            var csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+            fetch('/payments/qrcode/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify({
+                    upiId: upiId,
+                    payeeName: payeeName,
+                    amount: parseFloat(amount),
+                    note: note
+                })
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    document.getElementById('qrImage').src = 'data:image/png;base64,' + data.qrCode;
+                    document.getElementById('upiLink').href = data.upiLink;
+                    document.getElementById('qrResult').style.display = 'block';
+                } else {
+                    document.getElementById('qrError').textContent = data.message || 'Failed to generate QR code';
+                    document.getElementById('qrError').style.display = 'block';
+                }
+            })
+            .catch(function(error) {
+                document.getElementById('qrError').textContent = 'Error generating QR code: ' + error.message;
+                document.getElementById('qrError').style.display = 'block';
+            });
+        }
+    </script>
+</th:block>
+</body>
+</html>

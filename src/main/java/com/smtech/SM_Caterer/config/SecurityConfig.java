@@ -1,6 +1,7 @@
 package com.smtech.SM_Caterer.config;
 
 import com.smtech.SM_Caterer.API.filter.JwtAuthenticationFilter;
+import com.smtech.SM_Caterer.security.CustomAuthenticationSuccessHandler;
 import com.smtech.SM_Caterer.security.jwt.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -55,6 +56,7 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final CorsProperties corsProperties;
+    private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Value("${security.remember-me.key:smcaterer-default-key}")
     private String rememberMeKey;
@@ -95,7 +97,8 @@ public class SecurityConfig {
                     "/api/v1/auth/login",
                     "/api/v1/auth/refresh",
                     "/api/v1/auth/forgot-password",
-                    "/api/v1/health"
+                    "/api/v1/health",
+                    "/api/v1/transliterate"
                 ).permitAll()
 
                 // OPTIONS requests for CORS preflight
@@ -104,8 +107,8 @@ public class SecurityConfig {
                 // Tenant management - SUPER_ADMIN only
                 .requestMatchers("/api/v1/tenants/**").hasRole("SUPER_ADMIN")
 
-                // User management - TENANT_ADMIN or higher
-                .requestMatchers("/api/v1/users/**").hasAnyRole("SUPER_ADMIN", "TENANT_ADMIN")
+                // User management - SUPER_ADMIN, TENANT_ADMIN, or MANAGER (for listing/viewing)
+                .requestMatchers("/api/v1/users/**").hasAnyRole("SUPER_ADMIN", "TENANT_ADMIN", "MANAGER")
 
                 // All other API requests require authentication
                 .anyRequest().authenticated()
@@ -155,12 +158,27 @@ public class SecurityConfig {
                 // Public resources
                 .requestMatchers("/login", "/logout", "/error/**").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
-                .requestMatchers("/static/**", "/favicon.ico").permitAll()
-                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                .requestMatchers("/static/**", "/favicon.ico", "/uploads/**").permitAll()
+                .requestMatchers("/health", "/actuator/health", "/actuator/info").permitAll()
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
+
+                // Admin pages - SUPER_ADMIN only
+                .requestMatchers("/admin/**").hasRole("SUPER_ADMIN")
 
                 // Master data management - requires TENANT_ADMIN or MANAGER
                 .requestMatchers("/masters/**").hasAnyRole("SUPER_ADMIN", "TENANT_ADMIN", "MANAGER")
+
+                // Orders, Customers, Payments - tenant-scoped, requires TENANT_ADMIN, MANAGER, or STAFF
+                // Note: SUPER_ADMIN excluded — these controllers use tenantId which is null for SUPER_ADMIN
+                .requestMatchers("/orders/**").hasAnyRole("TENANT_ADMIN", "MANAGER", "STAFF")
+                .requestMatchers("/customers/**").hasAnyRole("TENANT_ADMIN", "MANAGER", "STAFF")
+                .requestMatchers("/payments/**").hasAnyRole("TENANT_ADMIN", "MANAGER", "STAFF")
+
+                // Reports - tenant-scoped, requires TENANT_ADMIN or MANAGER
+                .requestMatchers("/reports/**").hasAnyRole("TENANT_ADMIN", "MANAGER")
+
+                // Settings - tenant-scoped, requires TENANT_ADMIN
+                .requestMatchers("/settings/**").hasRole("TENANT_ADMIN")
 
                 // Dashboard - any authenticated user
                 .requestMatchers("/dashboard/**").authenticated()
@@ -179,7 +197,7 @@ public class SecurityConfig {
                 .loginProcessingUrl("/login")
                 .usernameParameter("username")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/dashboard", true)
+                .successHandler(authenticationSuccessHandler)
                 .failureUrl("/login?error=true")
                 .permitAll()
             )

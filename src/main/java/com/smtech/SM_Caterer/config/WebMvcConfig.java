@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -84,10 +83,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        // Simple redirects
-        registry.addRedirectViewController("/", "/dashboard");
-        registry.addRedirectViewController("/home", "/dashboard");
-    }
+    // Root path ("/") and "/home" redirects are handled by LoginController
+    // to support role-based routing (SUPER_ADMIN -> /admin, others -> /dashboard)
 }

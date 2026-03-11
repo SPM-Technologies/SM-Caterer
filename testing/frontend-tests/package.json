@@ -1,0 +1,12 @@
+{
+  "name": "sm-caterer-tests",
+  "version": "1.0.0",
+  "description": "SM-Caterer Frontend E2E Tests with Playwright",
+  "scripts": {
+    "test": "node test-runner.js",
+    "test:install": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  }
+}

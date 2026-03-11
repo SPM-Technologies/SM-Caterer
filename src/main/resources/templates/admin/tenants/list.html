@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{admin.tenants}">Tenant Management</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0"><i class="bi bi-building"></i> <span th:text="#{admin.tenants}">Tenant Management</span></h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/admin}" th:text="#{admin.title}">Admin</a></li>
+                    <li class="breadcrumb-item active" th:text="#{admin.tenants}">Tenants</li>
+                </ol>
+            </nav>
+        </div>
+        <a th:href="@{/admin/tenants/new}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> <span th:text="#{admin.tenants.add}">Add Tenant</span>
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form th:action="@{/admin/tenants}" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label" th:text="#{admin.tenants.status}">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="" th:text="#{common.all}">All</option>
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="#{'status.' + ${s}}" th:selected="${s == status}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="bi bi-search"></i> <span th:text="#{common.filter}">Filter</span>
+                    </button>
+                    <a th:href="@{/admin/tenants}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> <span th:text="#{common.clear}">Clear</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-transparent">
+            <span th:text="#{common.totalRecords}">Total Records</span>: <strong th:text="${totalItems}">0</strong>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th th:text="#{admin.tenants.tenantCode}">Code</th>
+                            <th th:text="#{admin.tenants.businessName}">Business Name</th>
+                            <th th:text="#{admin.tenants.contactPerson}">Contact Person</th>
+                            <th th:text="#{admin.tenants.email}">Email</th>
+                            <th th:text="#{admin.tenants.phone}">Phone</th>
+                            <th th:text="#{admin.tenants.status}">Status</th>
+                            <th th:text="#{admin.tenants.subscriptionEnd}">Subscription End</th>
+                            <th th:text="#{common.actions}">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="tenant : ${tenants}">
+                            <td>
+                                <a th:href="@{/admin/tenants/{id}/edit(id=${tenant.id})}" th:text="${tenant.tenantCode}" class="text-decoration-none fw-semibold"></a>
+                            </td>
+                            <td th:text="${tenant.businessName}">-</td>
+                            <td th:text="${tenant.contactPerson}">-</td>
+                            <td th:text="${tenant.email}">-</td>
+                            <td th:text="${tenant.phone}">-</td>
+                            <td>
+                                <span class="badge" th:classappend="${tenant.status.name() == 'ACTIVE' ? 'bg-success' : (tenant.status.name() == 'SUSPENDED' ? 'bg-warning text-dark' : 'bg-secondary')}" th:text="#{'status.' + ${tenant.status}}">-</span>
+                            </td>
+                            <td th:text="${tenant.subscriptionEndDate != null ? #temporals.format(tenant.subscriptionEndDate, 'dd-MM-yyyy') : '-'}">-</td>
+                            <td>
+                                <a th:href="@{/admin/tenants/{id}/edit(id=${tenant.id})}" class="btn btn-sm btn-outline-primary" th:title="#{common.edit}">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form th:action="@{/admin/tenants/{id}/delete(id=${tenant.id})}" method="post" class="d-inline" th:attr="onsubmit=|return confirm('#{common.confirmDelete}')|">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" th:title="#{common.delete}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(tenants)}">
+                            <td colspan="8" class="text-center py-4 text-muted">
+                                <i class="bi bi-inbox fs-3"></i>
+                                <p class="mb-0 mt-2" th:text="#{admin.tenants.noRecords}">No tenants found</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div th:replace="~{fragments/pagination :: pagination(baseUrl='/admin/tenants', currentPage=${currentPage}, totalPages=${totalPages}, pageSize=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir})}"></div>
+</div>
+</body>
+</html>

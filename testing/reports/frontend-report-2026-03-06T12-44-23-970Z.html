@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SM-Caterer Frontend Test Report</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f5f5f5; color: #333; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; padding: 20px; color: #2c3e50; }
+        .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 20px 0; }
+        .summary-card { background: white; border-radius: 8px; padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .summary-card h3 { font-size: 2em; margin: 10px 0; }
+        .total { border-top: 4px solid #3498db; } .total h3 { color: #3498db; }
+        .pass { border-top: 4px solid #27ae60; } .pass h3 { color: #27ae60; }
+        .fail { border-top: 4px solid #e74c3c; } .fail h3 { color: #e74c3c; }
+        .skip { border-top: 4px solid #f39c12; } .skip h3 { color: #f39c12; }
+        .progress-bar { background: #eee; border-radius: 20px; height: 30px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; background: #27ae60; width: 97.9%; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin: 20px 0; }
+        th { background: #34495e; color: white; padding: 12px 15px; text-align: left; }
+        td { padding: 10px 15px; border-bottom: 1px solid #eee; }
+        tr:hover { background: #f8f9fa; }
+        .status-pass { background: #d4edda; color: #155724; padding: 3px 10px; border-radius: 12px; font-weight: bold; }
+        .status-fail { background: #f8d7da; color: #721c24; padding: 3px 10px; border-radius: 12px; font-weight: bold; }
+        .status-skip { background: #fff3cd; color: #856404; padding: 3px 10px; border-radius: 12px; font-weight: bold; }
+        a { color: #3498db; }
+        .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>SM-Caterer Frontend E2E Test Report</h1>
+    <p style="text-align:center;color:#666;">Generated: 6/3/2026, 6:14:23 pm | URL: http://localhost:8080 | Screenshots: ./screenshots/</p>
+
+    <div class="summary">
+        <div class="summary-card total"><p>Total Tests</p><h3>48</h3></div>
+        <div class="summary-card pass"><p>Passed</p><h3>47</h3></div>
+        <div class="summary-card fail"><p>Failed</p><h3>1</h3></div>
+        <div class="summary-card skip"><p>Skipped</p><h3>0</h3></div>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill">97.9% Pass Rate</div>
+    </div>
+
+    <table>
+        <thead><tr><th>#</th><th>ID</th><th>Module</th><th>Test Name</th><th>Status</th><th>Details</th><th>Screenshot</th><th>Time</th></tr></thead>
+        <tbody><tr>
+            <td>1</td><td>TC-FE-001</td><td>Auth</td><td>Login page loads</td>
+            <td><span class="status-fail">FAIL</span></td>
+            <td>Redirected to login (session lost?)</td><td><a href="screenshots\auth\TC-FE-001.png" target="_blank">View</a></td><td>6:08:55 pm</td>
+        </tr>
+<tr>
+            <td>2</td><td>TC-FE-002</td><td>Auth</td><td>Login form has all elements</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>Username, password, submit found</td><td><a href="screenshots\auth\TC-FE-002.png" target="_blank">View</a></td><td>6:08:59 pm</td>
+        </tr>
+<tr>
+            <td>3</td><td>TC-FE-003</td><td>Security</td><td>Unauthenticated redirect to login</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>Redirected to login</td><td><a href="screenshots\security\TC-FE-003.png" target="_blank">View</a></td><td>6:09:02 pm</td>
+        </tr>
+<tr>
+            <td>4</td><td>TC-FE-004</td><td>Auth</td><td>Invalid login shows error</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>Error message shown</td><td><a href="screenshots\auth\TC-FE-004.png" target="_blank">View</a></td><td>6:09:08 pm</td>
+        </tr>
+<tr>
+            <td>5</td><td>TC-FE-SA-LOGIN</td><td>Auth</td><td>Super Admin login</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>Landed on: http://localhost:8080/admin</td><td><a href="screenshots\admin\TC-FE-SA-LOGIN.png" target="_blank">View</a></td><td>6:10:54 pm</td>
+        </tr>
+<tr>
+            <td>6</td><td>TC-FE-SA-001</td><td>Admin</td><td>Admin dashboard</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\admin\TC-FE-SA-001.png" target="_blank">View</a></td><td>6:11:56 pm</td>
+        </tr>
+<tr>
+            <td>7</td><td>TC-FE-SA-002</td><td>Admin</td><td>Tenant list</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\admin\TC-FE-SA-002.png" target="_blank">View</a></td><td>6:11:58 pm</td>
+        </tr>
+<tr>
+            <td>8</td><td>TC-FE-SA-003</td><td>Admin</td><td>New tenant form</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\admin\TC-FE-SA-003.png" target="_blank">View</a></td><td>6:12:00 pm</td>
+        </tr>
+<tr>
+            <td>9</td><td>TC-FE-SA-004</td><td>Admin</td><td>User list</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\admin\TC-FE-SA-004.png" target="_blank">View</a></td><td>6:12:02 pm</td>
+        </tr>
+<tr>
+            <td>10</td><td>TC-FE-SA-005</td><td>Admin</td><td>New user form</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\admin\TC-FE-SA-005.png" target="_blank">View</a></td><td>6:12:03 pm</td>
+        </tr>
+<tr>
+            <td>11</td><td>TC-FE-SA-006</td><td>Admin</td><td>SA Profile page</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\profile\TC-FE-SA-006.png" target="_blank">View</a></td><td>6:12:05 pm</td>
+        </tr>
+<tr>
+            <td>12</td><td>TC-FE-SA-LOGOUT</td><td>Auth</td><td>Super Admin logout</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>Redirected to login</td><td><a href="screenshots\auth\TC-FE-SA-LOGOUT.png" target="_blank">View</a></td><td>6:12:08 pm</td>
+        </tr>
+<tr>
+            <td>13</td><td>TC-FE-TA-LOGIN</td><td>Auth</td><td>Tenant Admin login</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>Landed on dashboard</td><td><a href="screenshots\dashboard\TC-FE-TA-LOGIN.png" target="_blank">View</a></td><td>6:13:19 pm</td>
+        </tr>
+<tr>
+            <td>14</td><td>TC-FE-TA-001</td><td>Dashboard</td><td>Tenant dashboard</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\dashboard\TC-FE-TA-001.png" target="_blank">View</a></td><td>6:13:21 pm</td>
+        </tr>
+<tr>
+            <td>15</td><td>TC-FE-TA-002</td><td>Customers</td><td>Customer list</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\customers\TC-FE-TA-002.png" target="_blank">View</a></td><td>6:13:23 pm</td>
+        </tr>
+<tr>
+            <td>16</td><td>TC-FE-TA-003</td><td>Customers</td><td>New customer form</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\customers\TC-FE-TA-003.png" target="_blank">View</a></td><td>6:13:24 pm</td>
+        </tr>
+<tr>
+            <td>17</td><td>TC-FE-TA-004</td><td>Masters</td><td>Units list</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\masters\TC-FE-TA-004.png" target="_blank">View</a></td><td>6:13:25 pm</td>
+        </tr>
+<tr>
+            <td>18</td><td>TC-FE-TA-005</td><td>Masters</td><td>New unit form</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\masters\TC-FE-TA-005.png" target="_blank">View</a></td><td>6:13:26 pm</td>
+        </tr>
+<tr>
+            <td>19</td><td>TC-FE-TA-006</td><td>Masters</td><td>Materials list</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\masters\TC-FE-TA-006.png" target="_blank">View</a></td><td>6:13:28 pm</td>
+        </tr>
+<tr>
+            <td>20</td><td>TC-FE-TA-007</td><td>Masters</td><td>New material form</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\masters\TC-FE-TA-007.png" target="_blank">View</a></td><td>6:13:29 pm</td>
+        </tr>
+<tr>
+            <td>21</td><td>TC-FE-TA-008</td><td>Masters</td><td>Event types list</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\masters\TC-FE-TA-008.png" target="_blank">View</a></td><td>6:13:30 pm</td>
+        </tr>
+<tr>
+            <td>22</td><td>TC-FE-TA-009</td><td>Masters</td><td>New event type form</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\masters\TC-FE-TA-009.png" target="_blank">View</a></td><td>6:13:31 pm</td>
+        </tr>
+<tr>
+            <td>23</td><td>TC-FE-TA-010</td><td>Masters</td><td>Menus list</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\masters\TC-FE-TA-010.png" target="_blank">View</a></td><td>6:13:33 pm</td>
+        </tr>
+<tr>
+            <td>24</td><td>TC-FE-TA-011</td><td>Masters</td><td>New menu form</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\masters\TC-FE-TA-011.png" target="_blank">View</a></td><td>6:13:34 pm</td>
+        </tr>
+<tr>
+            <td>25</td><td>TC-FE-TA-012</td><td>Masters</td><td>Recipes page</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\masters\TC-FE-TA-012.png" target="_blank">View</a></td><td>6:13:35 pm</td>
+        </tr>
+<tr>
+            <td>26</td><td>TC-FE-TA-013</td><td>Masters</td><td>UPI QR codes</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\masters\TC-FE-TA-013.png" target="_blank">View</a></td><td>6:13:36 pm</td>
+        </tr>
+<tr>
+            <td>27</td><td>TC-FE-TA-014</td><td>Masters</td><td>New UPI QR form</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\masters\TC-FE-TA-014.png" target="_blank">View</a></td><td>6:13:37 pm</td>
+        </tr>
+<tr>
+            <td>28</td><td>TC-FE-TA-015</td><td>Orders</td><td>Orders list</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\orders\TC-FE-TA-015.png" target="_blank">View</a></td><td>6:13:38 pm</td>
+        </tr>
+<tr>
+            <td>29</td><td>TC-FE-TA-016</td><td>Orders</td><td>New order wizard</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\orders\TC-FE-TA-016.png" target="_blank">View</a></td><td>6:13:40 pm</td>
+        </tr>
+<tr>
+            <td>30</td><td>TC-FE-TA-017</td><td>Orders</td><td>Order wizard step 1</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\orders\TC-FE-TA-017.png" target="_blank">View</a></td><td>6:13:41 pm</td>
+        </tr>
+<tr>
+            <td>31</td><td>TC-FE-TA-018</td><td>Payments</td><td>Payments list</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\payments\TC-FE-TA-018.png" target="_blank">View</a></td><td>6:13:42 pm</td>
+        </tr>
+<tr>
+            <td>32</td><td>TC-FE-TA-019</td><td>Payments</td><td>New payment form</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\payments\TC-FE-TA-019.png" target="_blank">View</a></td><td>6:13:43 pm</td>
+        </tr>
+<tr>
+            <td>33</td><td>TC-FE-TA-020</td><td>Reports</td><td>Reports index</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\reports\TC-FE-TA-020.png" target="_blank">View</a></td><td>6:13:45 pm</td>
+        </tr>
+<tr>
+            <td>34</td><td>TC-FE-TA-021</td><td>Reports</td><td>Orders report</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\reports\TC-FE-TA-021.png" target="_blank">View</a></td><td>6:13:47 pm</td>
+        </tr>
+<tr>
+            <td>35</td><td>TC-FE-TA-022</td><td>Reports</td><td>Payments report</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\reports\TC-FE-TA-022.png" target="_blank">View</a></td><td>6:13:48 pm</td>
+        </tr>
+<tr>
+            <td>36</td><td>TC-FE-TA-023</td><td>Reports</td><td>Pending balance report</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\reports\TC-FE-TA-023.png" target="_blank">View</a></td><td>6:13:49 pm</td>
+        </tr>
+<tr>
+            <td>37</td><td>TC-FE-TA-024</td><td>Reports</td><td>Stock report</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\reports\TC-FE-TA-024.png" target="_blank">View</a></td><td>6:13:51 pm</td>
+        </tr>
+<tr>
+            <td>38</td><td>TC-FE-TA-025</td><td>Reports</td><td>Customers report</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\reports\TC-FE-TA-025.png" target="_blank">View</a></td><td>6:13:52 pm</td>
+        </tr>
+<tr>
+            <td>39</td><td>TC-FE-TA-026</td><td>Profile</td><td>Profile page</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\profile\TC-FE-TA-026.png" target="_blank">View</a></td><td>6:13:54 pm</td>
+        </tr>
+<tr>
+            <td>40</td><td>TC-FE-TA-027</td><td>Settings</td><td>Email settings</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\settings\TC-FE-TA-027.png" target="_blank">View</a></td><td>6:13:55 pm</td>
+        </tr>
+<tr>
+            <td>41</td><td>TC-FE-TA-028</td><td>Settings</td><td>Payment settings</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\settings\TC-FE-TA-028.png" target="_blank">View</a></td><td>6:13:56 pm</td>
+        </tr>
+<tr>
+            <td>42</td><td>TC-FE-TA-029</td><td>Settings</td><td>Branding settings</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>HTTP 200</td><td><a href="screenshots\settings\TC-FE-TA-029.png" target="_blank">View</a></td><td>6:13:58 pm</td>
+        </tr>
+<tr>
+            <td>43</td><td>TC-FE-SEC-001</td><td>Security</td><td>Tenant cannot access /admin</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>Access denied (HTTP 404)</td><td><a href="screenshots\security\TC-FE-SEC-001.png" target="_blank">View</a></td><td>6:14:00 pm</td>
+        </tr>
+<tr>
+            <td>44</td><td>TC-FE-NAV-001</td><td>Navigation</td><td>Sidebar has navigation links</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>Found 26 links</td><td><a href="screenshots\dashboard\TC-FE-NAV-001.png" target="_blank">View</a></td><td>6:14:05 pm</td>
+        </tr>
+<tr>
+            <td>45</td><td>TC-FE-VAL-001</td><td>Validation</td><td>Customer form empty submit validation</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>Validation triggered</td><td><a href="screenshots\customers\TC-FE-VAL-001.png" target="_blank">View</a></td><td>6:14:10 pm</td>
+        </tr>
+<tr>
+            <td>46</td><td>TC-FE-VAL-002</td><td>Validation</td><td>Unit form empty submit validation</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>Validation check completed</td><td><a href="screenshots\masters\TC-FE-VAL-002.png" target="_blank">View</a></td><td>6:14:15 pm</td>
+        </tr>
+<tr>
+            <td>47</td><td>TC-FE-TA-LOGOUT</td><td>Auth</td><td>Tenant Admin logout</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>Redirected to login</td><td><a href="screenshots\auth\TC-FE-TA-LOGOUT.png" target="_blank">View</a></td><td>6:14:18 pm</td>
+        </tr>
+<tr>
+            <td>48</td><td>TC-FE-POST-LOGOUT</td><td>Security</td><td>Post-logout access blocked</td>
+            <td><span class="status-pass">PASS</span></td>
+            <td>Redirected to login</td><td><a href="screenshots\security\TC-FE-POST-LOGOUT.png" target="_blank">View</a></td><td>6:14:21 pm</td>
+        </tr></tbody>
+    </table>
+
+    <div class="footer">
+        <p>SM-Caterer Frontend E2E Test Report | Generated by Playwright Test Runner</p>
+    </div>
+</div>
+</body>
+</html>

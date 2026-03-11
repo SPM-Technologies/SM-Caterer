@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{settings.branding.title}">Branding Settings</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0"><i class="bi bi-palette"></i> <span th:text="#{settings.branding.title}">Branding Settings</span></h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}" th:text="#{nav.dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/settings/email}" th:text="#{nav.settings}">Settings</a></li>
+                    <li class="breadcrumb-item active" th:text="#{settings.branding.title}">Branding</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="row">
+        <!-- Branding Form -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="bi bi-brush"></i> <span th:text="#{settings.branding.customize}">Customize Branding</span></h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/settings/branding}" th:object="${settings}" method="post" enctype="multipart/form-data">
+
+                        <!-- Business Name (Read-only) -->
+                        <div class="mb-3">
+                            <label class="form-label" th:text="#{settings.branding.businessName}">Business Name</label>
+                            <input type="text" class="form-control" th:value="${settings.businessName}" disabled>
+                            <small class="text-muted" th:text="#{settings.branding.businessNameHint}">Legal business name (contact admin to change)</small>
+                        </div>
+
+                        <!-- Display Name -->
+                        <div class="mb-3">
+                            <label for="displayName" class="form-label" th:text="#{settings.branding.displayName}">Display Name</label>
+                            <input type="text" class="form-control" id="displayName" th:field="*{displayName}"
+                                   th:placeholder="${settings.businessName}" maxlength="200">
+                            <small class="text-muted" th:text="#{settings.branding.displayNameHint}">Name shown on pages and reports (defaults to business name)</small>
+                            <div th:if="${#fields.hasErrors('displayName')}" class="text-danger" th:errors="*{displayName}"></div>
+                        </div>
+
+                        <!-- Tagline -->
+                        <div class="mb-3">
+                            <label for="tagline" class="form-label" th:text="#{settings.branding.tagline}">Tagline</label>
+                            <input type="text" class="form-control" id="tagline" th:field="*{tagline}"
+                                   th:placeholder="#{settings.branding.taglinePlaceholder}" maxlength="200">
+                            <small class="text-muted" th:text="#{settings.branding.taglineHint}">A short slogan or description</small>
+                            <div th:if="${#fields.hasErrors('tagline')}" class="text-danger" th:errors="*{tagline}"></div>
+                        </div>
+
+                        <!-- Primary Color -->
+                        <div class="mb-3">
+                            <label for="primaryColor" class="form-label" th:text="#{settings.branding.primaryColor}">Primary Color</label>
+                            <div class="input-group">
+                                <input type="color" class="form-control form-control-color" id="colorPicker"
+                                       th:value="${settings.primaryColor ?: '#3498db'}"
+                                       onchange="document.getElementById('primaryColor').value = this.value">
+                                <input type="text" class="form-control" id="primaryColor" th:field="*{primaryColor}"
+                                       placeholder="#3498db" pattern="^#[0-9A-Fa-f]{6}$" maxlength="7">
+                            </div>
+                            <small class="text-muted" th:text="#{settings.branding.primaryColorHint}">Brand color used for accents</small>
+                            <div th:if="${#fields.hasErrors('primaryColor')}" class="text-danger" th:errors="*{primaryColor}"></div>
+                        </div>
+
+                        <!-- Logo Upload -->
+                        <div class="mb-4">
+                            <label class="form-label" th:text="#{settings.branding.logo}">Logo</label>
+
+                            <!-- Current Logo Preview -->
+                            <div th:if="${settings.hasLogo}" class="mb-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <img th:src="@{'/uploads/logos/' + ${#strings.substringAfter(settings.logoPath, 'logos/')}}"
+                                         alt="Current Logo" class="img-thumbnail" style="max-height: 80px;">
+                                    <div>
+                                        <span class="text-success"><i class="bi bi-check-circle"></i> <span th:text="#{settings.branding.logoUploaded}">Logo uploaded</span></span>
+                                        <br>
+                                        <button type="button" class="btn btn-sm btn-outline-danger mt-1" data-bs-toggle="modal" data-bs-target="#removeLogoModal">
+                                            <i class="bi bi-trash"></i> Remove Logo
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-2" th:unless="${settings.hasLogo}">
+                                <span class="text-muted"><i class="bi bi-image"></i> <span th:text="#{settings.branding.noLogo}">No logo uploaded</span></span>
+                            </div>
+
+                            <input type="file" class="form-control" id="logoFile" name="logoFile" accept="image/*">
+                            <small class="text-muted" th:text="#{settings.branding.logoHint}">Max 2MB, PNG or JPG recommended</small>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a th:href="@{/dashboard}" class="btn btn-secondary">
+                                <i class="bi bi-x-lg"></i> <span th:text="#{common.cancel}">Cancel</span>
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg"></i> <span th:text="#{common.save}">Save Changes</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Panel -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="bi bi-eye"></i> <span th:text="#{settings.branding.preview}">Preview</span></h5>
+                </div>
+                <div class="card-body">
+                    <div class="border rounded p-3 bg-light">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <div th:if="${settings.hasLogo}" class="flex-shrink-0">
+                                <img th:src="@{'/uploads/logos/' + ${#strings.substringAfter(settings.logoPath, 'logos/')}}"
+                                     alt="Logo" style="max-height: 40px;">
+                            </div>
+                            <div th:unless="${settings.hasLogo}" class="flex-shrink-0">
+                                <i class="bi bi-building fs-3" th:style="'color: ' + (${settings.primaryColor} ?: '#3498db')"></i>
+                            </div>
+                            <div>
+                                <strong id="previewName" th:text="${settings.displayName ?: settings.businessName}">Company Name</strong>
+                                <br th:if="${settings.tagline}">
+                                <small id="previewTagline" class="text-muted" th:text="${settings.tagline}"></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <p class="text-muted small mb-2" th:text="#{settings.branding.previewHint}">This is how your branding will appear on reports and pages.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Navigation -->
+            <div class="card border-0 shadow-sm mt-3">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="bi bi-gear"></i> <span th:text="#{settings.branding.otherSettings}">Other Settings</span></h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a th:href="@{/settings/email}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-envelope"></i> <span th:text="#{email.settings.title}">Email Settings</span>
+                    </a>
+                    <a th:href="@{/settings/payment}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-credit-card"></i> <span th:text="#{payment.settings.title}">Payment Settings</span>
+                    </a>
+                    <a th:href="@{/settings/branding}" class="list-group-item list-group-item-action active">
+                        <i class="bi bi-palette"></i> <span th:text="#{settings.branding.title}">Branding Settings</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remove Logo Modal -->
+    <div class="modal fade" id="removeLogoModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:text="#{settings.branding.removeLogo}">Remove Logo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p th:text="#{settings.branding.removeLogoConfirm}">Are you sure you want to remove the logo?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{common.cancel}">Cancel</button>
+                    <form th:action="@{/settings/branding/remove-logo}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> <span th:text="#{settings.branding.removeLogo}">Remove Logo</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        // Sync color picker with text input
+        document.getElementById('primaryColor').addEventListener('input', function() {
+            const value = this.value;
+            if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
+                document.getElementById('colorPicker').value = value;
+            }
+        });
+
+        // Live preview update
+        document.getElementById('displayName').addEventListener('input', function() {
+            document.getElementById('previewName').textContent = this.value || '[[${settings.businessName}]]';
+        });
+
+        document.getElementById('tagline').addEventListener('input', function() {
+            document.getElementById('previewTagline').textContent = this.value;
+        });
+    </script>
+</th:block>
+</body>
+</html>

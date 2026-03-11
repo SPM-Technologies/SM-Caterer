@@ -56,4 +56,25 @@ public interface TenantService extends BaseService<TenantDTO, Long> {
      * @return Page of active tenants
      */
     Page<TenantDTO> findAllActive(Pageable pageable);
+
+    /**
+     * Finds tenants by status with pagination.
+     * @param status Tenant status
+     * @param pageable Pagination parameters
+     * @return Page of tenants
+     */
+    Page<TenantDTO> findByStatus(TenantStatus status, Pageable pageable);
+
+    /**
+     * Counts total number of tenants.
+     * @return Total count
+     */
+    long countAll();
+
+    /**
+     * Counts tenants by status.
+     * @param status Tenant status
+     * @return Count of tenants with given status
+     */
+    long countByStatus(TenantStatus status);
 }

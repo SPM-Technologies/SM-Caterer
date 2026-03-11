@@ -61,12 +61,17 @@
     <div class="language-selector">
         <div class="dropdown">
             <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                <i class="bi bi-globe"></i>
+                <i class="bi bi-globe me-1"></i>
+                <span th:switch="${#locale.language}">
+                    <span th:case="'mr'">मराठी</span>
+                    <span th:case="'hi'">हिंदी</span>
+                    <span th:case="*">English</span>
+                </span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" th:href="@{/login(lang='en')}">English</a></li>
-                <li><a class="dropdown-item" th:href="@{/login(lang='hi')}">हिंदी</a></li>
-                <li><a class="dropdown-item" th:href="@{/login(lang='mr')}">मराठी</a></li>
+                <li><a class="dropdown-item" th:classappend="${#locale.language == 'en'} ? 'active'" th:href="@{/login(lang='en')}"><i class="bi bi-check2 me-1" th:if="${#locale.language == 'en'}"></i> English</a></li>
+                <li><a class="dropdown-item" th:classappend="${#locale.language == 'hi'} ? 'active'" th:href="@{/login(lang='hi')}"><i class="bi bi-check2 me-1" th:if="${#locale.language == 'hi'}"></i> हिंदी</a></li>
+                <li><a class="dropdown-item" th:classappend="${#locale.language == 'mr'} ? 'active'" th:href="@{/login(lang='mr')}"><i class="bi bi-check2 me-1" th:if="${#locale.language == 'mr'}"></i> मराठी</a></li>
             </ul>
         </div>
     </div>

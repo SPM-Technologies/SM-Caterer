@@ -41,12 +41,15 @@ public class JwtTokenProvider {
 
     private SecretKey secretKey;
 
+    private static final String DEFAULT_DEV_SECRET = "CloudCatersDevSecretKey256BitsMinimumForHS512Algorithm2024SecureToken!@#$";
+
     @PostConstruct
     public void init() {
         // Use a secure key for HS512 (minimum 512 bits = 64 bytes)
         String secret = jwtProperties.getSecret();
-        if (secret == null || secret.isEmpty()) {
-            throw new IllegalStateException("JWT secret key is not configured!");
+        if (secret == null || secret.isBlank()) {
+            log.warn("JWT secret key is not configured! Using default dev secret. Set JWT_SECRET env variable in production!");
+            secret = DEFAULT_DEV_SECRET;
         }
 
         byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);

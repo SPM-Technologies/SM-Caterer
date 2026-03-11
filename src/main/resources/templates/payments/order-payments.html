@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="#{payments.orderPayments}">Order Payments</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-credit-card"></i>
+                Payments for Order #<span th:text="${order.orderNumber}">ORD-001</span>
+            </h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}" th:text="#{nav.dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/orders}" th:text="#{nav.orders}">Orders</a></li>
+                    <li class="breadcrumb-item">
+                        <a th:href="@{/orders/{id}(id=${order.id})}" th:text="${order.orderNumber}">ORD-001</a>
+                    </li>
+                    <li class="breadcrumb-item active">Payments</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="d-flex gap-2">
+            <a th:href="@{/payments/new(orderId=${order.id})}" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Record Payment
+            </a>
+            <a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> <span th:text="#{common.back}">Back to Order</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Order Summary Card -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <small class="text-muted">Grand Total</small>
+                    <h4 class="mb-0" th:text="${#numbers.formatCurrency(order.grandTotal)}">10,000.00</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <small class="text-muted text-success">Total Paid</small>
+                    <h4 class="mb-0 text-success" th:text="${#numbers.formatCurrency(totalPaid)}">5,000.00</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <small class="text-muted" th:classappend="${balanceDue > 0} ? 'text-danger' : 'text-success'">Balance Due</small>
+                    <h4 class="mb-0" th:classappend="${balanceDue > 0} ? 'text-danger' : 'text-success'"
+                        th:text="${#numbers.formatCurrency(balanceDue)}">5,000.00</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <small class="text-muted">Customer</small>
+                    <h6 class="mb-0" th:text="${order.customerName}">Customer Name</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payments Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="card-title mb-0"><i class="bi bi-list"></i> Payment History</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Payment #</th>
+                        <th>Date</th>
+                        <th>Method</th>
+                        <th class="text-end">Amount</th>
+                        <th>Status</th>
+                        <th>Reference</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="payment : ${payments}" th:if="${payments != null && !payments.isEmpty()}">
+                        <td>
+                            <a th:href="@{/payments/{id}(id=${payment.id})}" th:text="${payment.paymentNumber}"
+                               class="text-decoration-none fw-semibold">PAY-001</a>
+                        </td>
+                        <td th:text="${#temporals.format(payment.paymentDate, 'dd-MM-yyyy')}">01-01-2024</td>
+                        <td>
+                            <span class="badge bg-info" th:text="${payment.paymentMethod}">CASH</span>
+                        </td>
+                        <td class="text-end fw-bold" th:text="${#numbers.formatCurrency(payment.amount)}">5,000.00</td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${payment.status.name() == 'COMPLETED'} ? 'bg-success' : (${payment.status.name() == 'PENDING'} ? 'bg-warning text-dark' : 'bg-danger')"
+                                  th:text="${payment.status}">COMPLETED</span>
+                        </td>
+                        <td th:text="${payment.transactionReference ?: '-'}">UTR123</td>
+                        <td>
+                            <a th:href="@{/payments/{id}(id=${payment.id})}" class="btn btn-sm btn-outline-primary"
+                               title="View">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a th:href="@{/payments/{id}/receipt(id=${payment.id})}" class="btn btn-sm btn-outline-secondary"
+                               title="Download Receipt">
+                                <i class="bi bi-file-pdf"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${payments == null || payments.isEmpty()}">
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox fs-3"></i>
+                            <p class="mb-0 mt-2">No payments recorded for this order.</p>
+                            <a th:href="@{/payments/new(orderId=${order.id})}" class="btn btn-sm btn-success mt-2">
+                                <i class="bi bi-plus-circle"></i> Record First Payment
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -28,6 +28,7 @@ public interface UserMapper extends EntityMapper<UserDTO, User> {
      */
     @Mapping(target = "tenantId", source = "tenant.id")
     @Mapping(target = "tenantCode", source = "tenant.tenantCode")
+    @Mapping(target = "tenantName", source = "tenant.businessName")
     @Override
     UserDTO toDto(User entity);
 

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="${isNew} ? #{admin.users.add} : #{admin.users.edit}">User Form</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-person"></i>
+                <span th:text="${isNew} ? #{admin.users.add} : #{admin.users.edit}">User Form</span>
+            </h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/admin}" th:text="#{common.breadcrumb.admin}">Admin</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/users}" th:text="#{admin.users.title}">Users</a></li>
+                    <li class="breadcrumb-item active" th:text="${isNew} ? #{admin.users.breadcrumb.add} : #{admin.users.breadcrumb.edit}">Form</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <form th:action="${isNew} ? @{/admin/users} : @{/admin/users/{id}(id=${user.id})}" th:object="${user}" method="post">
+                <!-- Hidden fields for edit mode -->
+                <input type="hidden" th:field="*{id}" th:if="${!isNew}">
+                <input type="hidden" th:field="*{version}" th:if="${!isNew}">
+                <div class="row">
+                    <!-- Tenant -->
+                    <div class="col-md-6 mb-3">
+                        <label for="tenantId" class="form-label" th:text="#{admin.users.tenant} + ' *'">Tenant *</label>
+                        <select class="form-select" id="tenantId" th:field="*{tenantId}" required>
+                            <option value="" th:text="#{admin.users.selectTenant}">Select Tenant</option>
+                            <option th:each="t : ${tenants}" th:value="${t.id}" th:text="${t.businessName}"></option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('tenantId')}" class="text-danger" th:errors="*{tenantId}"></div>
+                    </div>
+
+                    <!-- Username -->
+                    <div class="col-md-6 mb-3">
+                        <label for="username" class="form-label" th:text="#{admin.users.username} + ' *'">Username *</label>
+                        <input type="text" class="form-control" id="username" th:field="*{username}" required>
+                        <div th:if="${#fields.hasErrors('username')}" class="text-danger" th:errors="*{username}"></div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label" th:text="#{admin.users.email} + ' *'">Email *</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                        <div th:if="${#fields.hasErrors('email')}" class="text-danger" th:errors="*{email}"></div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="col-md-6 mb-3">
+                        <label for="rawPassword" class="form-label" th:text="${isNew} ? #{admin.users.passwordNew} : #{admin.users.passwordUpdate}">Password</label>
+                        <input type="password" class="form-control" id="rawPassword" name="rawPassword" th:required="${isNew}">
+                        <small class="text-muted" th:text="#{admin.users.passwordHint}">Minimum 8 characters</small>
+                    </div>
+
+                    <!-- First Name -->
+                    <div class="col-md-6 mb-3">
+                        <label for="firstName" class="form-label" th:text="#{admin.users.firstName} + ' *'">First Name *</label>
+                        <input type="text" class="form-control transliterable" id="firstName" th:field="*{firstName}" required data-transliterate="true">
+                        <div th:if="${#fields.hasErrors('firstName')}" class="text-danger" th:errors="*{firstName}"></div>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="col-md-6 mb-3">
+                        <label for="lastName" class="form-label" th:text="#{admin.users.lastName}">Last Name</label>
+                        <input type="text" class="form-control transliterable" id="lastName" th:field="*{lastName}" data-transliterate="true">
+                        <div th:if="${#fields.hasErrors('lastName')}" class="text-danger" th:errors="*{lastName}"></div>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label" th:text="#{admin.users.phone}">Phone</label>
+                        <input type="text" class="form-control" id="phone" th:field="*{phone}">
+                    </div>
+
+                    <!-- Role -->
+                    <div class="col-md-3 mb-3">
+                        <label for="role" class="form-label" th:text="#{admin.users.role} + ' *'">Role *</label>
+                        <select class="form-select" id="role" th:field="*{role}" required>
+                            <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-md-3 mb-3">
+                        <label for="status" class="form-label" th:text="#{admin.users.status} + ' *'">Status *</label>
+                        <select class="form-select" id="status" th:field="*{status}" required>
+                            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Language -->
+                    <div class="col-md-6 mb-3">
+                        <label for="languagePreference" class="form-label" th:text="#{admin.users.language}">Language Preference</label>
+                        <select class="form-select" id="languagePreference" th:field="*{languagePreference}">
+                            <option value="en" th:text="#{admin.users.lang.english}">English</option>
+                            <option value="hi" th:text="#{admin.users.lang.hindi}">Hindi</option>
+                            <option value="mr" th:text="#{admin.users.lang.marathi}">Marathi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a th:href="@{/admin/users}" class="btn btn-secondary">
+                        <i class="bi bi-x-lg"></i> <span th:text="#{admin.users.cancel}">Cancel</span>
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> <span th:text="${isNew} ? #{admin.users.create} : #{admin.users.update}">Save</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

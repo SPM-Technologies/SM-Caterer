@@ -12,8 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,6 +44,9 @@ public class PdfReceiptServiceImpl implements PdfReceiptService {
 
     @Value("${app.upload.path:./uploads}")
     private String uploadPath;
+
+    @Value("${app.upload.logo-dir:uploads/logos}")
+    private String logoUploadDir;
 
     @Override
     public String generateReceipt(Payment payment) {
@@ -112,11 +118,51 @@ public class PdfReceiptServiceImpl implements PdfReceiptService {
         PdfPTable headerTable = new PdfPTable(1);
         headerTable.setWidthPercentage(100);
 
-        // Business name
-        PdfPCell businessCell = new PdfPCell(new Phrase(tenant.getBusinessName(), HEADER_FONT));
+        // Add logo if available
+        if (tenant.hasLogo()) {
+            try {
+                String logoPath = tenant.getLogoPath();
+                // Handle both full path and relative path
+                Path fullLogoPath;
+                if (logoPath.contains("logos/")) {
+                    String filename = logoPath.substring(logoPath.lastIndexOf("logos/") + 6);
+                    fullLogoPath = Paths.get(logoUploadDir, filename);
+                } else {
+                    fullLogoPath = Paths.get(logoPath);
+                }
+
+                if (Files.exists(fullLogoPath)) {
+                    Image logo = Image.getInstance(fullLogoPath.toString());
+                    logo.scaleToFit(100, 60);
+                    logo.setAlignment(Element.ALIGN_CENTER);
+
+                    PdfPCell logoCell = new PdfPCell(logo);
+                    logoCell.setBorder(Rectangle.NO_BORDER);
+                    logoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    logoCell.setPaddingBottom(10);
+                    headerTable.addCell(logoCell);
+                }
+            } catch (Exception e) {
+                log.warn("Failed to add logo to receipt: {}", e.getMessage());
+                // Continue without logo
+            }
+        }
+
+        // Business/Display name - use effective display name
+        String displayName = tenant.getEffectiveDisplayName();
+        PdfPCell businessCell = new PdfPCell(new Phrase(displayName, HEADER_FONT));
         businessCell.setBorder(Rectangle.NO_BORDER);
         businessCell.setHorizontalAlignment(Element.ALIGN_CENTER);
         headerTable.addCell(businessCell);
+
+        // Tagline if available
+        if (tenant.getTagline() != null && !tenant.getTagline().isBlank()) {
+            Font taglineFont = new Font(Font.HELVETICA, 9, Font.ITALIC, Color.GRAY);
+            PdfPCell taglineCell = new PdfPCell(new Phrase(tenant.getTagline(), taglineFont));
+            taglineCell.setBorder(Rectangle.NO_BORDER);
+            taglineCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            headerTable.addCell(taglineCell);
+        }
 
         // Address
         if (tenant.getAddress() != null) {
@@ -220,6 +266,16 @@ public class PdfReceiptServiceImpl implements PdfReceiptService {
         thanks.setAlignment(Element.ALIGN_CENTER);
         thanks.setSpacingBefore(10);
         document.add(thanks);
+
+        // Add company name and tagline in footer
+        String footerText = tenant.getEffectiveDisplayName();
+        if (tenant.getTagline() != null && !tenant.getTagline().isBlank()) {
+            footerText += " | " + tenant.getTagline();
+        }
+        Paragraph companyFooter = new Paragraph(footerText, SMALL_FONT);
+        companyFooter.setAlignment(Element.ALIGN_CENTER);
+        companyFooter.setSpacingBefore(5);
+        document.add(companyFooter);
 
         Paragraph note = new Paragraph("This is a computer generated receipt.", SMALL_FONT);
         note.setAlignment(Element.ALIGN_CENTER);

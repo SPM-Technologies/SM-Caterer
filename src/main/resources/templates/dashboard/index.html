@@ -293,7 +293,7 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
-                        <a th:href="@{/orders/wizard/new}" class="btn btn-primary">
+                        <a th:href="@{/orders/new}" class="btn btn-primary">
                             <i class="bi bi-plus-circle"></i> <span th:text="#{dashboard.newOrder}">New Order</span>
                         </a>
                         <a th:href="@{/customers/new}" class="btn btn-outline-primary">
@@ -396,7 +396,7 @@
 <th:block layout:fragment="scripts">
     <script>
         function refreshDashboard() {
-            fetch('/api/dashboard/refresh')
+            fetch('/dashboard/refresh')
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {

@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SM-Caterer Test Report - 2026-03-06_17-14-59</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f5f5f5; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; padding: 20px; color: #2c3e50; }
+        .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 20px 0; }
+        .summary-card { background: white; border-radius: 8px; padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .summary-card h3 { font-size: 2em; margin: 10px 0; }
+        .total { border-top: 4px solid #3498db; }
+        .total h3 { color: #3498db; }
+        .pass { border-top: 4px solid #27ae60; }
+        .pass h3 { color: #27ae60; }
+        .fail { border-top: 4px solid #e74c3c; }
+        .fail h3 { color: #e74c3c; }
+        .skip { border-top: 4px solid #f39c12; }
+        .skip h3 { color: #f39c12; }
+        .progress-bar { background: #eee; border-radius: 20px; height: 30px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;
+            background: #27ae60; width: 98.6%; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin: 20px 0; }
+        th { background: #34495e; color: white; padding: 12px 15px; text-align: left; }
+        td { padding: 10px 15px; border-bottom: 1px solid #eee; }
+        tr:hover { background: #f8f9fa; }
+        .status-pass { background: #d4edda; color: #155724; padding: 3px 10px; border-radius: 12px; font-weight: bold; }
+        .status-fail { background: #f8d7da; color: #721c24; padding: 3px 10px; border-radius: 12px; font-weight: bold; }
+        .status-skip { background: #fff3cd; color: #856404; padding: 3px 10px; border-radius: 12px; font-weight: bold; }
+        .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>SM-Caterer Test Report</h1>
+    <p style="text-align:center;color:#666;">Generated: 2026-03-06 17:16:12 | Base URL: http://localhost:8080</p>
+
+    <div class="summary">
+        <div class="summary-card total"><p>Total Tests</p><h3>70</h3></div>
+        <div class="summary-card pass"><p>Passed</p><h3>69</h3></div>
+        <div class="summary-card fail"><p>Failed</p><h3>1</h3></div>
+        <div class="summary-card skip"><p>Skipped</p><h3>0</h3></div>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill">98.6% Pass Rate</div>
+    </div>
+
+    <table>
+        <thead><tr><th>#</th><th>ID</th><th>Module</th><th>Test Name</th><th>Status</th><th>HTTP Code</th><th>Details</th><th>Time</th></tr></thead>
+        <tbody>        <tr><td>1</td><td>TC-PUB-001</td><td>Public</td><td>Login page loads</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Login page rendered correctly</td><td>17:15:00</td></tr>
+        <tr><td>2</td><td>TC-PUB-002</td><td>Public</td><td>Health endpoint</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:00</td></tr>
+        <tr><td>3</td><td>TC-PUB-003</td><td>Public</td><td>Actuator health</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:00</td></tr>
+        <tr><td>4</td><td>TC-PUB-004</td><td>Public</td><td>Static CSS accessible</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>CSS loaded</td><td>17:15:00</td></tr>
+        <tr><td>5</td><td>TC-PUB-005</td><td>Public</td><td>Static JS accessible</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>JS loaded</td><td>17:15:00</td></tr>
+        <tr><td>6</td><td>TC-PUB-006</td><td>Security</td><td>Unauthenticated redirect</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Redirected to login page</td><td>17:15:00</td></tr>
+        <tr><td>7</td><td>TC-API-AUTH-001</td><td>API Auth</td><td>Super Admin API login</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>JWT token received</td><td>17:15:06</td></tr>
+        <tr><td>8</td><td>TC-API-AUTH-002</td><td>API Auth</td><td>Tenant Admin API login</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>JWT token received</td><td>17:15:08</td></tr>
+        <tr><td>9</td><td>TC-API-AUTH-003</td><td>API Auth</td><td>Invalid credentials rejected</td><td><span class='status-pass'>PASS</span></td><td>401</td><td>Got expected error status</td><td>17:15:09</td></tr>
+        <tr><td>10</td><td>TC-API-AUTH-004</td><td>API Auth</td><td>Get current user (SA)</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:09</td></tr>
+        <tr><td>11</td><td>TC-API-AUTH-005</td><td>API Auth</td><td>Get current user (TA)</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:10</td></tr>
+        <tr><td>12</td><td>TC-API-AUTH-006</td><td>API Auth</td><td>Reject unauthenticated API</td><td><span class='status-pass'>PASS</span></td><td>401</td><td>Got expected error status</td><td>17:15:10</td></tr>
+        <tr><td>13</td><td>TC-SA-001</td><td>Admin</td><td>Root redirect for SA</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:12</td></tr>
+        <tr><td>14</td><td>TC-SA-002</td><td>Admin</td><td>Admin dashboard</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:12</td></tr>
+        <tr><td>15</td><td>TC-SA-003</td><td>Admin</td><td>Tenant list page</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:13</td></tr>
+        <tr><td>16</td><td>TC-SA-004</td><td>Admin</td><td>New tenant form</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:13</td></tr>
+        <tr><td>17</td><td>TC-SA-005</td><td>Admin</td><td>User list page</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:14</td></tr>
+        <tr><td>18</td><td>TC-SA-006</td><td>Admin</td><td>New user form</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:17</td></tr>
+        <tr><td>19</td><td>TC-SA-007</td><td>Admin</td><td>Dashboard page (SA)</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:18</td></tr>
+        <tr><td>20</td><td>TC-SA-008</td><td>Admin</td><td>Profile page (SA)</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:19</td></tr>
+        <tr><td>21</td><td>TC-TA-001</td><td>Dashboard</td><td>Tenant dashboard</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:23</td></tr>
+        <tr><td>22</td><td>TC-TA-002</td><td>Dashboard</td><td>Root redirect for TA</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:25</td></tr>
+        <tr><td>23</td><td>TC-TA-003</td><td>Customers</td><td>Customer list page</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:25</td></tr>
+        <tr><td>24</td><td>TC-TA-004</td><td>Customers</td><td>New customer form</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:26</td></tr>
+        <tr><td>25</td><td>TC-TA-005</td><td>Master-Units</td><td>Units list page</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:26</td></tr>
+        <tr><td>26</td><td>TC-TA-006</td><td>Master-Units</td><td>New unit form</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:27</td></tr>
+        <tr><td>27</td><td>TC-TA-007</td><td>Master-Materials</td><td>Materials list page</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:28</td></tr>
+        <tr><td>28</td><td>TC-TA-008</td><td>Master-Materials</td><td>New material form</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:29</td></tr>
+        <tr><td>29</td><td>TC-TA-009</td><td>Master-EventTypes</td><td>Event types list page</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:30</td></tr>
+        <tr><td>30</td><td>TC-TA-010</td><td>Master-EventTypes</td><td>New event type form</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:32</td></tr>
+        <tr><td>31</td><td>TC-TA-011</td><td>Master-Menus</td><td>Menus list page</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:34</td></tr>
+        <tr><td>32</td><td>TC-TA-012</td><td>Master-Menus</td><td>New menu form</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:37</td></tr>
+        <tr><td>33</td><td>TC-TA-013</td><td>Master-Recipes</td><td>Recipes index page</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:38</td></tr>
+        <tr><td>34</td><td>TC-TA-014</td><td>Master-UPI</td><td>UPI QR codes page</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:40</td></tr>
+        <tr><td>35</td><td>TC-TA-015</td><td>Master-UPI</td><td>New UPI QR form</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:41</td></tr>
+        <tr><td>36</td><td>TC-TA-016</td><td>Orders</td><td>Orders list page</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:41</td></tr>
+        <tr><td>37</td><td>TC-TA-017</td><td>Orders</td><td>New order wizard start</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:42</td></tr>
+        <tr><td>38</td><td>TC-TA-018</td><td>Orders</td><td>Order wizard step 1</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:43</td></tr>
+        <tr><td>39</td><td>TC-TA-019</td><td>Payments</td><td>Payments list page</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:43</td></tr>
+        <tr><td>40</td><td>TC-TA-020</td><td>Payments</td><td>New payment form</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:44</td></tr>
+        <tr><td>41</td><td>TC-TA-021</td><td>Reports</td><td>Reports index page</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:44</td></tr>
+        <tr><td>42</td><td>TC-TA-022</td><td>Reports</td><td>Orders report</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:44</td></tr>
+        <tr><td>43</td><td>TC-TA-023</td><td>Reports</td><td>Payments report</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:45</td></tr>
+        <tr><td>44</td><td>TC-TA-024</td><td>Reports</td><td>Pending balance report</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:47</td></tr>
+        <tr><td>45</td><td>TC-TA-025</td><td>Reports</td><td>Stock report</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:47</td></tr>
+        <tr><td>46</td><td>TC-TA-026</td><td>Reports</td><td>Customers report</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:48</td></tr>
+        <tr><td>47</td><td>TC-TA-027</td><td>Profile</td><td>Profile page</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:48</td></tr>
+        <tr><td>48</td><td>TC-TA-028</td><td>Settings</td><td>Email settings</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:48</td></tr>
+        <tr><td>49</td><td>TC-TA-029</td><td>Settings</td><td>Payment settings</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:49</td></tr>
+        <tr><td>50</td><td>TC-TA-030</td><td>Settings</td><td>Branding settings</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:15:49</td></tr>
+        <tr><td>51</td><td>TC-API-CUST-001</td><td>API-Customers</td><td>List customers</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:50</td></tr>
+        <tr><td>52</td><td>TC-API-UNIT-001</td><td>API-Units</td><td>List units</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:50</td></tr>
+        <tr><td>53</td><td>TC-API-MAT-001</td><td>API-Materials</td><td>List materials</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:50</td></tr>
+        <tr><td>54</td><td>TC-API-MENU-001</td><td>API-Menus</td><td>List menus</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:50</td></tr>
+        <tr><td>55</td><td>TC-API-EVT-001</td><td>API-EventTypes</td><td>List event types</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:50</td></tr>
+        <tr><td>56</td><td>TC-API-ORD-001</td><td>API-Orders</td><td>List orders</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:51</td></tr>
+        <tr><td>57</td><td>TC-API-PAY-001</td><td>API-Payments</td><td>List payments</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:51</td></tr>
+        <tr><td>58</td><td>TC-API-UTIL-001</td><td>API-Utilities</td><td>List utilities</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:51</td></tr>
+        <tr><td>59</td><td>TC-API-UPI-001</td><td>API-UPI</td><td>List UPI QR codes</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:51</td></tr>
+        <tr><td>60</td><td>TC-API-TEN-001</td><td>API-Tenants</td><td>List tenants (SA)</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:51</td></tr>
+        <tr><td>61</td><td>TC-API-USR-001</td><td>API-Users</td><td>List users (SA)</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>17:15:52</td></tr>
+        <tr><td>62</td><td>TC-SEC-001</td><td>Security</td><td>Tenant cannot access tenants API</td><td><span class='status-pass'>PASS</span></td><td>403</td><td>Got expected error status</td><td>17:15:52</td></tr>
+        <tr><td>63</td><td>TC-SEC-002</td><td>Security</td><td>Tenant blocked from admin pages</td><td><span class='status-pass'>PASS</span></td><td>404</td><td>Access denied (HTTP 404)</td><td>17:15:52</td></tr>
+        <tr><td>64</td><td>TC-SEC-003</td><td>Security</td><td>API rejects unauthenticated</td><td><span class='status-pass'>PASS</span></td><td>401</td><td>Got expected error status</td><td>17:15:52</td></tr>
+        <tr><td>65</td><td>TC-ERR-001</td><td>Errors</td><td>404 error page</td><td><span class='status-pass'>PASS</span></td><td>404</td><td>404 returned</td><td>17:15:52</td></tr>
+        <tr><td>66</td><td>TC-SWAGGER-001</td><td>Docs</td><td>Swagger UI loads</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Swagger UI loaded</td><td>17:15:52</td></tr>
+        <tr><td>67</td><td>TC-SWAGGER-002</td><td>Docs</td><td>OpenAPI docs endpoint</td><td><span class='status-fail'>FAIL</span></td><td>0</td><td>HTTP 0</td><td>17:16:09</td></tr>
+        <tr><td>68</td><td>TC-DASH-AJAX-001</td><td>Dashboard</td><td>Dashboard metrics AJAX</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:16:11</td></tr>
+        <tr><td>69</td><td>TC-DASH-AJAX-002</td><td>Dashboard</td><td>Dashboard refresh AJAX</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Page loaded successfully</td><td>17:16:12</td></tr>
+        <tr><td>70</td><td>TC-LOGOUT-001</td><td>Auth</td><td>Logout works</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Redirected to login</td><td>17:16:12</td></tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>SM-Caterer Automated Test Report | Generated by PowerShell Test Runner</p>
+    </div>
+</div>
+</body>
+</html>

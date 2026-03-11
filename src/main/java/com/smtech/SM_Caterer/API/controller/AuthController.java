@@ -261,6 +261,7 @@ public class AuthController {
      */
     @GetMapping("/me")
     @Operation(summary = "Get current user", description = "Get currently authenticated user info")
+    @Transactional(readOnly = true)
     public ResponseEntity<ApiResponse<UserDTO>> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

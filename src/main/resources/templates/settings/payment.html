@@ -3,13 +3,13 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/main}">
 <head>
-    <title>Payment Settings</title>
+    <title th:text="#{payment.settings.title}">Payment Settings</title>
 </head>
 <body>
 <div layout:fragment="content">
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-credit-card-2-front"></i> Payment Settings</h2>
+        <h2><i class="bi bi-credit-card-2-front"></i> <span th:text="#{payment.settings.title}">Payment Settings</span></h2>
     </div>
 
     <!-- Status Card -->
@@ -19,10 +19,10 @@
                 <i th:if="${settings.paymentEnabled}" class="bi bi-check-circle-fill text-success fs-2 me-3"></i>
                 <i th:unless="${settings.paymentEnabled}" class="bi bi-pause-circle-fill text-warning fs-2 me-3"></i>
                 <div>
-                    <h5 th:if="${settings.paymentEnabled}" class="text-success mb-0">Payment feature is enabled</h5>
-                    <h5 th:unless="${settings.paymentEnabled}" class="text-warning mb-0">Payment feature is disabled</h5>
-                    <small th:if="${settings.paymentEnabled}" class="text-muted">You can record and track payments.</small>
-                    <small th:unless="${settings.paymentEnabled}" class="text-muted">Enable to start recording payments.</small>
+                    <h5 th:if="${settings.paymentEnabled}" class="text-success mb-0" th:text="#{payment.settings.enabled}">Payment feature is enabled</h5>
+                    <h5 th:unless="${settings.paymentEnabled}" class="text-warning mb-0" th:text="#{payment.settings.disabled}">Payment feature is disabled</h5>
+                    <small th:if="${settings.paymentEnabled}" class="text-muted" th:text="#{payment.settings.enabledHint}">You can record and track payments.</small>
+                    <small th:unless="${settings.paymentEnabled}" class="text-muted" th:text="#{payment.settings.disabledHint}">Enable to start recording payments.</small>
                 </div>
             </div>
         </div>
@@ -36,27 +36,27 @@
                 <div class="mb-4">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" role="switch" th:field="*{paymentEnabled}" id="paymentEnabled">
-                        <label class="form-check-label" for="paymentEnabled">Enable Payment Feature</label>
+                        <label class="form-check-label" for="paymentEnabled" th:text="#{payment.settings.enableFeature}">Enable Payment Feature</label>
                     </div>
-                    <small class="text-muted">When disabled, payment recording will not be available.</small>
+                    <small class="text-muted" th:text="#{payment.settings.disabledNote}">When disabled, payment recording will not be available.</small>
                 </div>
 
                 <hr>
 
                 <!-- UPI Settings -->
-                <h5 class="mb-3"><i class="bi bi-qr-code"></i> UPI QR Code Settings</h5>
-                <p class="text-muted">Configure default UPI details for generating payment QR codes.</p>
+                <h5 class="mb-3"><i class="bi bi-qr-code"></i> <span th:text="#{payment.settings.upiTitle}">UPI QR Code Settings</span></h5>
+                <p class="text-muted" th:text="#{payment.settings.upiDescription}">Configure default UPI details for generating payment QR codes.</p>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label class="form-label">Default UPI ID</label>
+                        <label class="form-label" th:text="#{payment.settings.defaultUpiId}">Default UPI ID</label>
                         <input type="text" class="form-control" th:field="*{defaultUpiId}" placeholder="business@upi">
-                        <small class="text-muted">Your UPI Virtual Payment Address (VPA)</small>
+                        <small class="text-muted" th:text="#{payment.settings.upiIdHint}">Your UPI Virtual Payment Address (VPA)</small>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">UPI Payee Name</label>
+                        <label class="form-label" th:text="#{payment.settings.upiPayeeName}">UPI Payee Name</label>
                         <input type="text" class="form-control" th:field="*{upiPayeeName}" placeholder="Your Business Name">
-                        <small class="text-muted">Name shown to payer in UPI apps</small>
+                        <small class="text-muted" th:text="#{payment.settings.upiPayeeHint}">Name shown to payer in UPI apps</small>
                     </div>
                 </div>
 
@@ -64,8 +64,8 @@
                 <div class="alert" th:classappend="${isUpiConfigured} ? 'alert-success' : 'alert-info'">
                     <i th:if="${isUpiConfigured}" class="bi bi-check-circle"></i>
                     <i th:unless="${isUpiConfigured}" class="bi bi-info-circle"></i>
-                    <span th:if="${isUpiConfigured}">UPI QR code generation is ready.</span>
-                    <span th:unless="${isUpiConfigured}">Fill in both UPI ID and Payee Name to enable QR code generation.</span>
+                    <span th:if="${isUpiConfigured}" th:text="#{payment.settings.upiReady}">UPI QR code generation is ready.</span>
+                    <span th:unless="${isUpiConfigured}" th:text="#{payment.settings.upiNotReady}">Fill in both UPI ID and Payee Name to enable QR code generation.</span>
                 </div>
 
                 <div class="d-flex justify-content-end mt-4">

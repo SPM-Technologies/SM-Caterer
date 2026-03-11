@@ -68,9 +68,9 @@ public class DashboardController {
     }
 
     /**
-     * API endpoint for dashboard metrics (for AJAX refresh).
+     * AJAX endpoint for dashboard metrics (web session-based).
      */
-    @GetMapping("/api/dashboard/metrics")
+    @GetMapping("/dashboard/metrics")
     @ResponseBody
     public ResponseEntity<DashboardMetricsDTO> getMetrics(@AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null) {
@@ -84,9 +84,9 @@ public class DashboardController {
     }
 
     /**
-     * Refresh dashboard data.
+     * Refresh dashboard data (web session-based).
      */
-    @GetMapping("/api/dashboard/refresh")
+    @GetMapping("/dashboard/refresh")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> refreshDashboard(@AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null) {

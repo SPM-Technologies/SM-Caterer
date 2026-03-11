@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <title th:text="${isNew} ? #{admin.tenants.add} : #{admin.tenants.edit}">Tenant Form</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-building"></i>
+                <span th:text="${isNew} ? #{admin.tenants.add} : #{admin.tenants.edit}">Tenant Form</span>
+            </h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/admin}" th:text="#{admin.title}">Admin</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/tenants}" th:text="#{admin.tenants}">Tenants</a></li>
+                    <li class="breadcrumb-item active" th:text="${isNew} ? #{admin.tenants.add} : #{admin.tenants.edit}">Form</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <form th:action="${isNew} ? @{/admin/tenants} : @{/admin/tenants/{id}(id=${tenant.id})}" th:object="${tenant}" method="post">
+                <!-- Hidden fields for edit mode -->
+                <input type="hidden" th:field="*{id}" th:if="${!isNew}">
+                <input type="hidden" th:field="*{version}" th:if="${!isNew}">
+                <div class="row">
+                    <!-- Tenant Code -->
+                    <div class="col-md-6 mb-3">
+                        <label for="tenantCode" class="form-label" th:text="#{admin.tenants.tenantCode} + ' *'">Tenant Code *</label>
+                        <input type="text" class="form-control" id="tenantCode" th:field="*{tenantCode}" required th:readonly="${!isNew}">
+                        <div th:if="${#fields.hasErrors('tenantCode')}" class="text-danger" th:errors="*{tenantCode}"></div>
+                    </div>
+
+                    <!-- Business Name -->
+                    <div class="col-md-6 mb-3">
+                        <label for="businessName" class="form-label" th:text="#{admin.tenants.businessName} + ' *'">Business Name *</label>
+                        <input type="text" class="form-control transliterable" id="businessName" th:field="*{businessName}" required data-transliterate="true">
+                        <div th:if="${#fields.hasErrors('businessName')}" class="text-danger" th:errors="*{businessName}"></div>
+                    </div>
+
+                    <!-- Contact Person -->
+                    <div class="col-md-6 mb-3">
+                        <label for="contactPerson" class="form-label" th:text="#{admin.tenants.contactPerson}">Contact Person</label>
+                        <input type="text" class="form-control transliterable" id="contactPerson" th:field="*{contactPerson}" data-transliterate="true">
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label" th:text="#{admin.tenants.email} + ' *'">Email *</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                        <div th:if="${#fields.hasErrors('email')}" class="text-danger" th:errors="*{email}"></div>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label" th:text="#{admin.tenants.phone}">Phone</label>
+                        <input type="text" class="form-control" id="phone" th:field="*{phone}">
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-md-6 mb-3">
+                        <label for="status" class="form-label" th:text="#{admin.tenants.status} + ' *'">Status *</label>
+                        <select class="form-select" id="status" th:field="*{status}" required>
+                            <option th:each="s : ${statuses}" th:value="${s}" th:text="#{'status.' + ${s}}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="col-md-12 mb-3">
+                        <label for="address" class="form-label" th:text="#{admin.tenants.address}">Address</label>
+                        <textarea class="form-control transliterable" id="address" th:field="*{address}" rows="2" data-transliterate="true"></textarea>
+                    </div>
+
+                    <!-- City -->
+                    <div class="col-md-4 mb-3">
+                        <label for="city" class="form-label" th:text="#{admin.tenants.city}">City</label>
+                        <input type="text" class="form-control transliterable" id="city" th:field="*{city}" data-transliterate="true">
+                    </div>
+
+                    <!-- State -->
+                    <div class="col-md-4 mb-3">
+                        <label for="state" class="form-label" th:text="#{admin.tenants.state}">State</label>
+                        <input type="text" class="form-control transliterable" id="state" th:field="*{state}" data-transliterate="true">
+                    </div>
+
+                    <!-- Pincode -->
+                    <div class="col-md-4 mb-3">
+                        <label for="pincode" class="form-label" th:text="#{admin.tenants.pincode}">Pincode</label>
+                        <input type="text" class="form-control" id="pincode" th:field="*{pincode}">
+                    </div>
+
+                    <!-- GSTIN -->
+                    <div class="col-md-6 mb-3">
+                        <label for="gstin" class="form-label" th:text="#{admin.tenants.gstin}">GSTIN</label>
+                        <input type="text" class="form-control" id="gstin" th:field="*{gstin}">
+                    </div>
+
+                    <!-- Subscription Start Date -->
+                    <div class="col-md-3 mb-3">
+                        <label for="subscriptionStartDate" class="form-label" th:text="#{admin.tenants.subscriptionStart}">Subscription Start</label>
+                        <input type="date" class="form-control" id="subscriptionStartDate" th:field="*{subscriptionStartDate}">
+                    </div>
+
+                    <!-- Subscription End Date -->
+                    <div class="col-md-3 mb-3">
+                        <label for="subscriptionEndDate" class="form-label" th:text="#{admin.tenants.subscriptionEnd}">Subscription End</label>
+                        <input type="date" class="form-control" id="subscriptionEndDate" th:field="*{subscriptionEndDate}">
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a th:href="@{/admin/tenants}" class="btn btn-secondary">
+                        <i class="bi bi-x-lg"></i> <span th:text="#{admin.tenants.cancel}">Cancel</span>
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> <span th:text="${isNew} ? #{admin.tenants.create} : #{admin.tenants.update}">Save</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

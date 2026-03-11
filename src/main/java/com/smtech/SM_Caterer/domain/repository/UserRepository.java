@@ -136,4 +136,29 @@ public interface UserRepository extends BaseRepository<User, Long> {
      * Counts users by tenant.
      */
     long countByTenantId(Long tenantId);
+
+    /**
+     * Finds users by status with pagination.
+     */
+    Page<User> findByStatus(UserStatus status, Pageable pageable);
+
+    /**
+     * Finds users by tenant and role with pagination.
+     */
+    Page<User> findByTenantIdAndRole(Long tenantId, UserRole role, Pageable pageable);
+
+    /**
+     * Finds users by tenant and status with pagination.
+     */
+    Page<User> findByTenantIdAndStatus(Long tenantId, UserStatus status, Pageable pageable);
+
+    /**
+     * Finds users by role and status with pagination.
+     */
+    Page<User> findByRoleAndStatus(UserRole role, UserStatus status, Pageable pageable);
+
+    /**
+     * Finds users by tenant, role and status with pagination.
+     */
+    Page<User> findByTenantIdAndRoleAndStatus(Long tenantId, UserRole role, UserStatus status, Pageable pageable);
 }

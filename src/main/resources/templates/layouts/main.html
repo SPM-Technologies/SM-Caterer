@@ -26,30 +26,65 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" th:href="@{/dashboard}">
-                <i class="bi bi-shop"></i> SM-Caterer
+            <!-- Brand link - different for SUPER_ADMIN vs tenant users -->
+            <a class="navbar-brand d-flex align-items-center" sec:authorize="hasRole('SUPER_ADMIN')" th:href="@{/admin}">
+                <i class="bi bi-shield-lock me-1"></i>
+                <span>SM-Caterer Admin</span>
+            </a>
+            <a class="navbar-brand d-flex align-items-center" sec:authorize="!hasRole('SUPER_ADMIN')" th:href="@{/dashboard}">
+                <!-- Show tenant logo if available -->
+                <img th:if="${tenantHasLogo}"
+                     th:src="@{'/uploads/logos/' + ${#strings.substringAfter(tenantLogoPath, 'logos/')}}"
+                     alt="Logo" class="me-2" style="max-height: 32px;">
+                <!-- Show default icon if no logo -->
+                <i th:unless="${tenantHasLogo}" class="bi bi-shop me-1"></i>
+                <!-- Show tenant display name or default -->
+                <span th:text="${tenantDisplayName} ?: 'SM-Caterer'">SM-Caterer</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
+                    <!-- ========== SUPER_ADMIN Navigation ========== -->
+                    <li class="nav-item" sec:authorize="hasRole('SUPER_ADMIN')">
+                        <a class="nav-link" th:href="@{/admin}" th:classappend="${currentUri == '/admin'} ? 'active' : ''">
+                            <i class="bi bi-speedometer2"></i> <span th:text="#{admin.nav.dashboard}">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('SUPER_ADMIN')">
+                        <a class="nav-link" th:href="@{/admin/tenants}" th:classappend="${#strings.startsWith(currentUri, '/admin/tenants')} ? 'active' : ''">
+                            <i class="bi bi-building"></i> <span th:text="#{admin.nav.tenants}">Tenants</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('SUPER_ADMIN')">
+                        <a class="nav-link" th:href="@{/admin/users}" th:classappend="${#strings.startsWith(currentUri, '/admin/users')} ? 'active' : ''">
+                            <i class="bi bi-people"></i> <span th:text="#{admin.nav.users}">Users</span>
+                        </a>
+                    </li>
+
+                    <!-- ========== Tenant User Navigation (hidden for SUPER_ADMIN) ========== -->
+                    <li class="nav-item" sec:authorize="!hasRole('SUPER_ADMIN')">
                         <a class="nav-link" th:href="@{/dashboard}" th:classappend="${#strings.startsWith(currentUri, '/dashboard')} ? 'active' : ''">
                             <i class="bi bi-speedometer2"></i> <span th:text="#{nav.dashboard}">Dashboard</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" sec:authorize="hasAnyRole('TENANT_ADMIN', 'MANAGER', 'STAFF')">
                         <a class="nav-link" th:href="@{/orders}" th:classappend="${#strings.startsWith(currentUri, '/orders')} ? 'active' : ''">
                             <i class="bi bi-receipt"></i> <span th:text="#{nav.orders}">Orders</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" sec:authorize="hasAnyRole('TENANT_ADMIN', 'MANAGER', 'STAFF')">
                         <a class="nav-link" th:href="@{/customers}" th:classappend="${#strings.startsWith(currentUri, '/customers')} ? 'active' : ''">
                             <i class="bi bi-people"></i> <span th:text="#{nav.customers}">Customers</span>
                         </a>
                     </li>
-                    <li class="nav-item dropdown" sec:authorize="hasAnyRole('SUPER_ADMIN', 'TENANT_ADMIN', 'MANAGER')">
+                    <li class="nav-item" sec:authorize="hasAnyRole('TENANT_ADMIN', 'MANAGER', 'STAFF')">
+                        <a class="nav-link" th:href="@{/payments}" th:classappend="${#strings.startsWith(currentUri, '/payments')} ? 'active' : ''">
+                            <i class="bi bi-credit-card"></i> <span th:text="#{nav.payments}">Payments</span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown" sec:authorize="hasAnyRole('TENANT_ADMIN', 'MANAGER')">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" th:classappend="${#strings.startsWith(currentUri, '/masters')} ? 'active' : ''">
                             <i class="bi bi-database"></i> <span th:text="#{nav.masters}">Master Data</span>
                         </a>
@@ -63,7 +98,7 @@
                             <li><a class="dropdown-item" th:href="@{/masters/upi-qr}"><i class="bi bi-qr-code"></i> <span th:text="#{nav.upiQr}">UPI QR Codes</span></a></li>
                         </ul>
                     </li>
-                    <li class="nav-item dropdown" sec:authorize="hasAnyRole('SUPER_ADMIN', 'TENANT_ADMIN', 'MANAGER')">
+                    <li class="nav-item dropdown" sec:authorize="hasAnyRole('TENANT_ADMIN', 'MANAGER')">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" th:classappend="${#strings.startsWith(currentUri, '/reports')} ? 'active' : ''">
                             <i class="bi bi-file-earmark-bar-graph"></i> <span th:text="#{nav.reports}">Reports</span>
                         </a>
@@ -83,12 +118,17 @@
                     <!-- Language Selector -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-globe"></i>
+                            <i class="bi bi-globe me-1"></i>
+                            <span th:switch="${#locale.language}">
+                                <span th:case="'mr'">मराठी</span>
+                                <span th:case="'hi'">हिंदी</span>
+                                <span th:case="*">English</span>
+                            </span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" th:href="@{''(lang='en')}">English</a></li>
-                            <li><a class="dropdown-item" th:href="@{''(lang='hi')}">हिंदी</a></li>
-                            <li><a class="dropdown-item" th:href="@{''(lang='mr')}">मराठी</a></li>
+                            <li><a class="dropdown-item" th:classappend="${#locale.language == 'en'} ? 'active'" th:href="@{''(lang='en')}"><i class="bi bi-check2 me-1" th:if="${#locale.language == 'en'}"></i> English</a></li>
+                            <li><a class="dropdown-item" th:classappend="${#locale.language == 'hi'} ? 'active'" th:href="@{''(lang='hi')}"><i class="bi bi-check2 me-1" th:if="${#locale.language == 'hi'}"></i> हिंदी</a></li>
+                            <li><a class="dropdown-item" th:classappend="${#locale.language == 'mr'} ? 'active'" th:href="@{''(lang='mr')}"><i class="bi bi-check2 me-1" th:if="${#locale.language == 'mr'}"></i> मराठी</a></li>
                         </ul>
                     </li>
 
@@ -100,6 +140,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person"></i> <span th:text="#{nav.profile}">Profile</span></a></li>
+                            <li sec:authorize="hasRole('TENANT_ADMIN')"><a class="dropdown-item" th:href="@{/settings/branding}"><i class="bi bi-gear"></i> <span th:text="#{nav.settings}">Settings</span></a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> <span th:text="#{nav.logout}">Logout</span></a></li>
                         </ul>
@@ -132,9 +173,12 @@
     <!-- Footer -->
     <footer class="footer bg-light text-center text-muted py-3">
         <div class="container">
-            <span>&copy; 2024 SM-Caterer. <span th:text="#{footer.rights}">All rights reserved.</span></span>
-            <span class="ms-3" sec:authorize="isAuthenticated()">
-                <small><span th:text="#{footer.tenant}">Tenant</span>: <span sec:authentication="principal.tenantCode">-</span></small>
+            <!-- SUPER_ADMIN footer -->
+            <span sec:authorize="hasRole('SUPER_ADMIN')">&copy; 2024 <span th:text="#{footer.adminPortal}">SM-Caterer Admin Portal</span>. <span th:text="#{footer.rights}">All rights reserved.</span></span>
+            <!-- Tenant user footer -->
+            <span sec:authorize="!hasRole('SUPER_ADMIN')">&copy; 2024 <span th:text="${tenantDisplayName} ?: 'SM-Caterer'">SM-Caterer</span>. <span th:text="#{footer.rights}">All rights reserved.</span></span>
+            <span th:if="${tenantTagline}" sec:authorize="!hasRole('SUPER_ADMIN')" class="ms-2">
+                <small class="text-muted">| <span th:text="${tenantTagline}"></span></small>
             </span>
         </div>
     </footer>
@@ -148,6 +192,8 @@
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <!-- Custom JS -->
     <script th:src="@{/js/common.js}"></script>
+    <!-- Transliteration for Hindi/Marathi -->
+    <script th:src="@{/js/transliteration.js}"></script>
 
     <!-- Page-specific scripts -->
     <th:block layout:fragment="scripts"></th:block>

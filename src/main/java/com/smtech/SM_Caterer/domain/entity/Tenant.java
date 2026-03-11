@@ -104,6 +104,25 @@ public class Tenant extends BaseEntity {
     private LocalDate subscriptionEndDate;
 
     // ========================================
+    // BRANDING CONFIGURATION
+    // ========================================
+
+    @Column(name = "display_name", length = 200)
+    @Size(max = 200, message = "Display name must not exceed 200 characters")
+    private String displayName;
+
+    @Column(name = "logo_path", length = 500)
+    private String logoPath;
+
+    @Column(name = "tagline", length = 200)
+    @Size(max = 200, message = "Tagline must not exceed 200 characters")
+    private String tagline;
+
+    @Column(name = "primary_color", length = 7)
+    @Pattern(regexp = "^#[0-9A-Fa-f]{6}$", message = "Primary color must be a valid hex color (e.g., #3498db)")
+    private String primaryColor;
+
+    // ========================================
     // FEATURE TOGGLES
     // ========================================
 
@@ -198,5 +217,29 @@ public class Tenant extends BaseEntity {
         }
         return LocalDate.now().isBefore(subscriptionEndDate) ||
                LocalDate.now().isEqual(subscriptionEndDate);
+    }
+
+    /**
+     * Gets the effective display name (falls back to business name).
+     */
+    @Transient
+    public String getEffectiveDisplayName() {
+        return (displayName != null && !displayName.isBlank()) ? displayName : businessName;
+    }
+
+    /**
+     * Checks if tenant has a logo configured.
+     */
+    @Transient
+    public boolean hasLogo() {
+        return logoPath != null && !logoPath.isBlank();
+    }
+
+    /**
+     * Gets the effective primary color (falls back to default).
+     */
+    @Transient
+    public String getEffectivePrimaryColor() {
+        return (primaryColor != null && !primaryColor.isBlank()) ? primaryColor : "#3498db";
     }
 }

@@ -3,10 +3,10 @@ package com.smtech.SM_Caterer.service.dto;
 import com.smtech.SM_Caterer.domain.enums.TenantStatus;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
@@ -21,7 +21,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class TenantDTO extends BaseDTO {
 
     @NotBlank(message = "Tenant code is required")

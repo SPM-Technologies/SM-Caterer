@@ -269,3 +269,31 @@ body {
     border-color: #198754;
     background-image: none;
 }
+
+/* ===================================
+   Transliteration Styles
+   =================================== */
+
+/* Navbar transliteration toggle */
+#translitToggleNav {
+    transition: all 0.2s ease;
+}
+
+#translitToggleNav:hover {
+    transform: scale(1.05);
+}
+
+/* Suggestion dropdown */
+#translit-suggestions {
+    font-family: 'Noto Sans Devanagari', 'Mangal', Arial, sans-serif;
+}
+
+#translit-suggestions > div {
+    transition: background 0.1s;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+#translit-suggestions > div:hover {
+    background: #e8f0fe !important;
+}

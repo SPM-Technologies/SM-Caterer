@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SM-Caterer Test Report - 2026-03-06_12-52-21</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f5f5f5; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; padding: 20px; color: #2c3e50; }
+        .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 20px 0; }
+        .summary-card { background: white; border-radius: 8px; padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .summary-card h3 { font-size: 2em; margin: 10px 0; }
+        .total { border-top: 4px solid #3498db; }
+        .total h3 { color: #3498db; }
+        .pass { border-top: 4px solid #27ae60; }
+        .pass h3 { color: #27ae60; }
+        .fail { border-top: 4px solid #e74c3c; }
+        .fail h3 { color: #e74c3c; }
+        .skip { border-top: 4px solid #f39c12; }
+        .skip h3 { color: #f39c12; }
+        .progress-bar { background: #eee; border-radius: 20px; height: 30px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;
+            background: #f39c12; width: 71.4%; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin: 20px 0; }
+        th { background: #34495e; color: white; padding: 12px 15px; text-align: left; }
+        td { padding: 10px 15px; border-bottom: 1px solid #eee; }
+        tr:hover { background: #f8f9fa; }
+        .status-pass { background: #d4edda; color: #155724; padding: 3px 10px; border-radius: 12px; font-weight: bold; }
+        .status-fail { background: #f8d7da; color: #721c24; padding: 3px 10px; border-radius: 12px; font-weight: bold; }
+        .status-skip { background: #fff3cd; color: #856404; padding: 3px 10px; border-radius: 12px; font-weight: bold; }
+        .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>SM-Caterer Test Report</h1>
+    <p style="text-align:center;color:#666;">Generated: 2026-03-06 12:52:30 | Base URL: http://localhost:8080</p>
+
+    <div class="summary">
+        <div class="summary-card total"><p>Total Tests</p><h3>28</h3></div>
+        <div class="summary-card pass"><p>Passed</p><h3>20</h3></div>
+        <div class="summary-card fail"><p>Failed</p><h3>7</h3></div>
+        <div class="summary-card skip"><p>Skipped</p><h3>1</h3></div>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill">71.4% Pass Rate</div>
+    </div>
+
+    <table>
+        <thead><tr><th>#</th><th>ID</th><th>Module</th><th>Test Name</th><th>Status</th><th>HTTP Code</th><th>Details</th><th>Time</th></tr></thead>
+        <tbody>        <tr><td>1</td><td>TC-PUB-001</td><td>Public</td><td>Login page loads</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Login page rendered correctly</td><td>12:52:22</td></tr>
+        <tr><td>2</td><td>TC-PUB-002</td><td>Public</td><td>Health endpoint</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>12:52:22</td></tr>
+        <tr><td>3</td><td>TC-PUB-003</td><td>Public</td><td>Actuator health</td><td><span class='status-fail'>FAIL</span></td><td>503</td><td>The remote server returned an error: (503) Server Unavailable.</td><td>12:52:22</td></tr>
+        <tr><td>4</td><td>TC-PUB-004</td><td>Public</td><td>Static CSS accessible</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>CSS loaded</td><td>12:52:22</td></tr>
+        <tr><td>5</td><td>TC-PUB-005</td><td>Public</td><td>Static JS accessible</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>JS loaded</td><td>12:52:22</td></tr>
+        <tr><td>6</td><td>TC-PUB-006</td><td>Security</td><td>Unauthenticated redirect</td><td><span class='status-fail'>FAIL</span></td><td>302</td><td>No redirect</td><td>12:52:22</td></tr>
+        <tr><td>7</td><td>TC-API-AUTH-001</td><td>API Auth</td><td>Super Admin API login</td><td><span class='status-fail'>FAIL</span></td><td>0</td><td>The remote server returned an error: (500) Internal Server Error.</td><td>12:52:23</td></tr>
+        <tr><td>8</td><td>TC-API-AUTH-002</td><td>API Auth</td><td>Tenant Admin API login</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>JWT token received</td><td>12:52:24</td></tr>
+        <tr><td>9</td><td>TC-API-AUTH-003</td><td>API Auth</td><td>Invalid credentials rejected</td><td><span class='status-pass'>PASS</span></td><td>401</td><td>Got expected error status</td><td>12:52:24</td></tr>
+        <tr><td>10</td><td>TC-API-AUTH-004</td><td>API Auth</td><td>Get current user (SA)</td><td><span class='status-skip'>SKIP</span></td><td>0</td><td>No SA token</td><td>12:52:24</td></tr>
+        <tr><td>11</td><td>TC-API-AUTH-005</td><td>API Auth</td><td>Get current user (TA)</td><td><span class='status-fail'>FAIL</span></td><td>500</td><td>The remote server returned an error: (500) Internal Server Error.</td><td>12:52:24</td></tr>
+        <tr><td>12</td><td>TC-API-AUTH-006</td><td>API Auth</td><td>Reject unauthenticated API</td><td><span class='status-pass'>PASS</span></td><td>401</td><td>Got expected error status</td><td>12:52:24</td></tr>
+        <tr><td>13</td><td>TC-SA-000</td><td>Admin</td><td>SA Web Login</td><td><span class='status-fail'>FAIL</span></td><td>0</td><td>Could not create web session</td><td>12:52:24</td></tr>
+        <tr><td>14</td><td>TC-TA-000</td><td>Tenant</td><td>TA Web Login</td><td><span class='status-fail'>FAIL</span></td><td>0</td><td>Could not create web session</td><td>12:52:25</td></tr>
+        <tr><td>15</td><td>TC-API-CUST-001</td><td>API-Customers</td><td>List customers</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>12:52:25</td></tr>
+        <tr><td>16</td><td>TC-API-UNIT-001</td><td>API-Units</td><td>List units</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>12:52:25</td></tr>
+        <tr><td>17</td><td>TC-API-MAT-001</td><td>API-Materials</td><td>List materials</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>12:52:25</td></tr>
+        <tr><td>18</td><td>TC-API-MENU-001</td><td>API-Menus</td><td>List menus</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>12:52:26</td></tr>
+        <tr><td>19</td><td>TC-API-EVT-001</td><td>API-EventTypes</td><td>List event types</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>12:52:26</td></tr>
+        <tr><td>20</td><td>TC-API-ORD-001</td><td>API-Orders</td><td>List orders</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>12:52:26</td></tr>
+        <tr><td>21</td><td>TC-API-PAY-001</td><td>API-Payments</td><td>List payments</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>12:52:26</td></tr>
+        <tr><td>22</td><td>TC-API-UTIL-001</td><td>API-Utilities</td><td>List utilities</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>12:52:27</td></tr>
+        <tr><td>23</td><td>TC-API-UPI-001</td><td>API-UPI</td><td>List UPI QR codes</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>API responded correctly</td><td>12:52:27</td></tr>
+        <tr><td>24</td><td>TC-SEC-001</td><td>Security</td><td>Tenant cannot access tenants API</td><td><span class='status-pass'>PASS</span></td><td>403</td><td>Got expected error status</td><td>12:52:27</td></tr>
+        <tr><td>25</td><td>TC-SEC-003</td><td>Security</td><td>API rejects unauthenticated</td><td><span class='status-pass'>PASS</span></td><td>401</td><td>Got expected error status</td><td>12:52:27</td></tr>
+        <tr><td>26</td><td>TC-SWAGGER-001</td><td>Docs</td><td>Swagger UI loads</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Swagger UI loaded</td><td>12:52:27</td></tr>
+        <tr><td>27</td><td>TC-SWAGGER-002</td><td>Docs</td><td>OpenAPI docs endpoint</td><td><span class='status-fail'>FAIL</span></td><td>500</td><td>HTTP 500</td><td>12:52:30</td></tr>
+        <tr><td>28</td><td>TC-LOGOUT-001</td><td>Auth</td><td>Logout works</td><td><span class='status-pass'>PASS</span></td><td>200</td><td>Redirected to login</td><td>12:52:30</td></tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>SM-Caterer Automated Test Report | Generated by PowerShell Test Runner</p>
+    </div>
+</div>
+</body>
+</html>

@@ -1,6 +1,9 @@
 package com.smtech.SM_Caterer.service.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -9,6 +12,9 @@ import java.time.LocalDateTime;
  * All DTOs should extend this class to inherit common audit fields.
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 public abstract class BaseDTO {
 
     private Long id;

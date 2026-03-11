@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,8 +44,8 @@
 <div class="container">
     <!-- Print Button -->
     <div class="no-print" style="text-align: right; margin-bottom: 20px;">
-        <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer;">Print Order</button>
-        <button onclick="window.close()" style="padding: 10px 20px; cursor: pointer; margin-left: 10px;">Close</button>
+        <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer;" th:text="#{orders.print.printOrder}">Print Order</button>
+        <button onclick="window.close()" style="padding: 10px 20px; cursor: pointer; margin-left: 10px;" th:text="#{orders.print.close}">Close</button>
     </div>
 
     <!-- Header -->
@@ -57,7 +57,7 @@
     <!-- Order Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <div>
-            <h2 style="font-size: 18px;">ORDER <span th:text="${order.orderNumber}">ORD-001</span></h2>
+            <h2 style="font-size: 18px;"><span th:text="#{orders.print.order}">ORDER</span> <span th:text="${order.orderNumber}">ORD-001</span></h2>
         </div>
         <div>
             <span class="status-badge" th:classappend="'status-' + ${order.status.name().toLowerCase()}"
@@ -68,34 +68,34 @@
     <!-- Info Boxes -->
     <div class="order-info">
         <div class="info-box">
-            <h3>Customer</h3>
+            <h3 th:text="#{orders.print.customer}">Customer</h3>
             <p><strong th:text="${order.customerName}">John Doe</strong></p>
             <p th:text="${order.customerPhone}">9876543210</p>
             <p th:if="${order.customerEmail}" th:text="${order.customerEmail}">email@example.com</p>
         </div>
         <div class="info-box">
-            <h3>Event Details</h3>
+            <h3 th:text="#{orders.print.eventDetails}">Event Details</h3>
             <p><strong th:text="${order.eventTypeName}">Wedding</strong></p>
             <p th:text="${#temporals.format(order.eventDate, 'dd MMM yyyy')}">01 Jan 2024</p>
             <p th:if="${order.eventTime}" th:text="${#temporals.format(order.eventTime, 'hh:mm a')}">12:00 PM</p>
-            <p><span th:text="${order.guestCount}">100</span> Guests</p>
+            <p><span th:text="${order.guestCount}">100</span> <span th:text="#{orders.print.guests}">Guests</span></p>
         </div>
         <div class="info-box">
-            <h3>Venue</h3>
+            <h3 th:text="#{orders.print.venue}">Venue</h3>
             <p><strong th:text="${order.venueName}">Venue Name</strong></p>
             <p th:if="${order.venueAddress}" th:text="${order.venueAddress}">Address</p>
         </div>
     </div>
 
     <!-- Menu Items -->
-    <div class="section-title">Menu Items</div>
+    <div class="section-title" th:text="#{orders.print.menuItems}">Menu Items</div>
     <table>
         <thead>
         <tr>
-            <th>Item</th>
-            <th class="text-right">Qty</th>
-            <th class="text-right">Price/Item</th>
-            <th class="text-right">Subtotal</th>
+            <th th:text="#{orders.print.item}">Item</th>
+            <th class="text-right" th:text="#{orders.print.qty}">Qty</th>
+            <th class="text-right" th:text="#{orders.print.pricePerItem}">Price/Item</th>
+            <th class="text-right" th:text="#{orders.print.subtotal}">Subtotal</th>
         </tr>
         </thead>
         <tbody>
@@ -108,7 +108,7 @@
         </tbody>
         <tfoot>
         <tr>
-            <td colspan="3" class="text-right"><strong>Menu Subtotal</strong></td>
+            <td colspan="3" class="text-right"><strong th:text="#{orders.print.menuSubtotal}">Menu Subtotal</strong></td>
             <td class="text-right"><strong th:text="${#numbers.formatDecimal(order.menuSubtotal, 1, 2)}">5000.00</strong></td>
         </tr>
         </tfoot>
@@ -116,14 +116,14 @@
 
     <!-- Utilities -->
     <div th:if="${!#lists.isEmpty(order.utilities)}">
-        <div class="section-title">Utilities</div>
+        <div class="section-title" th:text="#{orders.print.utilities}">Utilities</div>
         <table>
             <thead>
             <tr>
-                <th>Item</th>
-                <th class="text-right">Qty</th>
-                <th class="text-right">Price/Unit</th>
-                <th class="text-right">Subtotal</th>
+                <th th:text="#{orders.print.item}">Item</th>
+                <th class="text-right" th:text="#{orders.print.qty}">Qty</th>
+                <th class="text-right" th:text="#{orders.print.pricePerUnit}">Price/Unit</th>
+                <th class="text-right" th:text="#{orders.print.subtotal}">Subtotal</th>
             </tr>
             </thead>
             <tbody>
@@ -136,7 +136,7 @@
             </tbody>
             <tfoot>
             <tr>
-                <td colspan="3" class="text-right"><strong>Utility Subtotal</strong></td>
+                <td colspan="3" class="text-right"><strong th:text="#{orders.print.utilitySubtotal}">Utility Subtotal</strong></td>
                 <td class="text-right"><strong th:text="${#numbers.formatDecimal(order.utilitySubtotal, 1, 2)}">500.00</strong></td>
             </tr>
             </tfoot>
@@ -146,27 +146,27 @@
     <!-- Totals -->
     <table class="totals">
         <tr>
-            <td>Subtotal</td>
+            <td th:text="#{orders.print.subtotal}">Subtotal</td>
             <td class="text-right" th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}">5500.00</td>
         </tr>
         <tr th:if="${order.discountAmount > 0}">
-            <td>Discount (<span th:text="${order.discountPercent}">5</span>%)</td>
+            <td><span th:text="#{orders.print.discount}">Discount</span> (<span th:text="${order.discountPercent}">5</span>%)</td>
             <td class="text-right" style="color: red;">-<span th:text="${#numbers.formatDecimal(order.discountAmount, 1, 2)}">275.00</span></td>
         </tr>
         <tr th:if="${order.taxAmount > 0}">
-            <td>Tax (<span th:text="${order.taxPercent}">18</span>%)</td>
+            <td><span th:text="#{orders.print.tax}">Tax</span> (<span th:text="${order.taxPercent}">18</span>%)</td>
             <td class="text-right" th:text="${#numbers.formatDecimal(order.taxAmount, 1, 2)}">940.50</td>
         </tr>
         <tr class="total-row">
-            <td>Grand Total</td>
+            <td th:text="#{orders.print.grandTotal}">Grand Total</td>
             <td class="text-right" th:text="${#numbers.formatDecimal(order.grandTotal, 1, 2)}">6165.50</td>
         </tr>
         <tr>
-            <td>Paid</td>
+            <td th:text="#{orders.print.paid}">Paid</td>
             <td class="text-right" style="color: green;" th:text="${#numbers.formatDecimal(order.advanceAmount, 1, 2)}">2000.00</td>
         </tr>
         <tr>
-            <td><strong>Balance Due</strong></td>
+            <td><strong th:text="#{orders.print.balanceDue}">Balance Due</strong></td>
             <td class="text-right" th:style="${order.balanceAmount > 0 ? 'color: orange;' : 'color: green;'}">
                 <strong th:text="${#numbers.formatDecimal(order.balanceAmount, 1, 2)}">4165.50</strong>
             </td>
@@ -175,14 +175,14 @@
 
     <!-- Notes -->
     <div th:if="${order.notes}">
-        <div class="section-title">Notes</div>
+        <div class="section-title" th:text="#{orders.print.notes}">Notes</div>
         <div class="notes" th:text="${order.notes}">Order notes</div>
     </div>
 
     <!-- Footer -->
     <div class="footer">
-        <p>Thank you for your business!</p>
-        <p th:text="'Generated on ' + ${#temporals.format(#temporals.createNow(), 'dd MMM yyyy HH:mm')}">Date</p>
+        <p th:text="#{orders.print.thankYou}">Thank you for your business!</p>
+        <p><span th:text="#{orders.print.generatedOn}">Generated on</span> <span th:text="${#temporals.format(#temporals.createNow(), 'dd MMM yyyy HH:mm')}">Date</span></p>
     </div>
 </div>
 </body>

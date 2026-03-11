@@ -245,4 +245,58 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserDTO, Long>
         log.info("User account unlocked (ID: {})", userId);
         log.debug("User account unlocked: {}", user.getUsername());
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countAll() {
+        return userRepository.count();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserDTO> findAllUsers(Long tenantId, UserRole role, UserStatus status, Pageable pageable) {
+        if (tenantId != null && role != null && status != null) {
+            return userRepository.findByTenantIdAndRoleAndStatus(tenantId, role, status, pageable)
+                    .map(userMapper::toDto);
+        } else if (tenantId != null && role != null) {
+            return userRepository.findByTenantIdAndRole(tenantId, role, pageable)
+                    .map(userMapper::toDto);
+        } else if (tenantId != null && status != null) {
+            return userRepository.findByTenantIdAndStatus(tenantId, status, pageable)
+                    .map(userMapper::toDto);
+        } else if (role != null && status != null) {
+            return userRepository.findByRoleAndStatus(role, status, pageable)
+                    .map(userMapper::toDto);
+        } else if (tenantId != null) {
+            return userRepository.findByTenantId(tenantId, pageable)
+                    .map(userMapper::toDto);
+        } else if (role != null) {
+            return userRepository.findByRole(role, pageable)
+                    .map(userMapper::toDto);
+        } else if (status != null) {
+            return userRepository.findByStatus(status, pageable)
+                    .map(userMapper::toDto);
+        } else {
+            return userRepository.findAll(pageable)
+                    .map(userMapper::toDto);
+        }
+    }
+
+    @Override
+    @Transactional
+    public UserDTO createUser(UserDTO dto) {
+        return create(dto);
+    }
+
+    @Override
+    @Transactional
+    public UserDTO updateUser(Long id, UserDTO dto) {
+        return update(id, dto);
+    }
+
+    @Override
+    @Transactional
+    public void deleteUser(Long id) {
+        delete(id);
+    }
 }

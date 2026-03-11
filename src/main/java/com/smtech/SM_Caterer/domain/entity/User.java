@@ -59,7 +59,7 @@ public class User extends BaseEntity {
     @Column(name = "username", nullable = false, unique = true, length = 50)
     @NotBlank(message = "Username is required")
     @Size(min = 3, max = 50, message = "Username must be 3-50 characters")
-    @Pattern(regexp = "^[a-z0-9._-]+$", message = "Username must be lowercase alphanumeric with . _ -")
+    @Pattern(regexp = "^[a-zA-Z0-9._-]+$", message = "Username must be alphanumeric with . _ -")
     private String username;
 
     @Column(name = "email", nullable = false, unique = true, length = 100)
