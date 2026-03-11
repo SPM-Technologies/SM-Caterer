@@ -78,6 +78,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/fonts/**")
                 .addResourceLocations("classpath:/static/fonts/");
 
+        // Uploaded files (logos, etc.)
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:uploads/");
+
         // Webjars (if using)
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");

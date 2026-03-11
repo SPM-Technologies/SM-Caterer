@@ -87,7 +87,7 @@
                             <!-- Current Logo Preview -->
                             <div th:if="${settings.hasLogo}" class="mb-3">
                                 <div class="d-flex align-items-center gap-3">
-                                    <img th:src="@{'/uploads/logos/' + ${#strings.substringAfter(settings.logoPath, 'logos/')}}"
+                                    <img th:src="@{'/' + ${settings.logoPath}}"
                                          alt="Current Logo" class="img-thumbnail" style="max-height: 80px;">
                                     <div>
                                         <span class="text-success"><i class="bi bi-check-circle"></i> <span th:text="#{settings.branding.logoUploaded}">Logo uploaded</span></span>
@@ -132,7 +132,7 @@
                     <div class="border rounded p-3 bg-light">
                         <div class="d-flex align-items-center gap-2 mb-2">
                             <div th:if="${settings.hasLogo}" class="flex-shrink-0">
-                                <img th:src="@{'/uploads/logos/' + ${#strings.substringAfter(settings.logoPath, 'logos/')}}"
+                                <img th:src="@{'/' + ${settings.logoPath}}"
                                      alt="Logo" style="max-height: 40px;">
                             </div>
                             <div th:unless="${settings.hasLogo}" class="flex-shrink-0">

@@ -241,6 +241,12 @@ public class TenantSettingsController {
         // Handle logo upload
         if (logoFile != null && !logoFile.isEmpty()) {
             try {
+                // Delete old logo if exists
+                if (tenant.getLogoPath() != null) {
+                    try {
+                        Files.deleteIfExists(Paths.get(tenant.getLogoPath()));
+                    } catch (IOException ignored) {}
+                }
                 String logoPath = saveLogoFile(logoFile, tenantId);
                 tenant.setLogoPath(logoPath);
             } catch (IOException e) {
@@ -273,6 +279,7 @@ public class TenantSettingsController {
         // Delete old logo file if exists
         if (tenant.getLogoPath() != null) {
             try {
+                // logoPath stored as "uploads/logos/filename.ext"
                 Path oldLogoPath = Paths.get(tenant.getLogoPath());
                 Files.deleteIfExists(oldLogoPath);
             } catch (IOException e) {
@@ -324,6 +331,7 @@ public class TenantSettingsController {
 
         log.info("Logo saved for tenant {}: {}", tenantId, filePath);
 
-        return filePath.toString();
+        // Store web-relative path with forward slashes (works cross-platform)
+        return "uploads/logos/" + newFilename;
     }
 }
