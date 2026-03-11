@@ -2,6 +2,25 @@
  * SM-Caterer Common JavaScript Functions
  */
 
+/**
+ * CSRF-aware fetch wrapper for native fetch() calls.
+ * Automatically includes CSRF token from meta tags.
+ * Usage: csrfFetch('/api/endpoint', { method: 'POST', body: ... })
+ */
+function csrfFetch(url, options) {
+    options = options || {};
+    options.headers = options.headers || {};
+
+    var csrfToken = document.querySelector("meta[name='_csrf']");
+    var csrfHeader = document.querySelector("meta[name='_csrf_header']");
+
+    if (csrfToken && csrfHeader) {
+        options.headers[csrfHeader.getAttribute("content")] = csrfToken.getAttribute("content");
+    }
+
+    return fetch(url, options);
+}
+
 // CSRF Token setup for AJAX requests
 $(document).ready(function() {
     var token = $("meta[name='_csrf']").attr("content");

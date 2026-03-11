@@ -89,7 +89,7 @@
                 </div>
 
                 <div class="d-flex justify-content-between">
-                    <button type="button" class="btn btn-outline-info" id="testEmailBtn" th:disabled="${!isConfigured}">
+                    <button type="button" class="btn btn-outline-info" id="testEmailBtn">
                         <i class="bi bi-send"></i> <span th:text="#{email.settings.test}">Send Test Email</span>
                     </button>
                     <button type="submit" class="btn btn-primary">
@@ -139,7 +139,7 @@ document.getElementById('sendTestBtn').addEventListener('click', function() {
     this.disabled = true;
     this.innerHTML = '<span class="spinner-border spinner-border-sm"></span> [[#{email.settings.sending}]]';
 
-    fetch('/settings/email/test', {
+    csrfFetch('/settings/email/test', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({testEmail: email})

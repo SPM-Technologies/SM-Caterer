@@ -37,11 +37,12 @@ public class TenantDTO extends BaseDTO {
     @Size(max = 100, message = "Contact person must not exceed 100 characters")
     private String contactPerson;
 
+    @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
     @Size(max = 100, message = "Email must not exceed 100 characters")
     private String email;
 
-    @Pattern(regexp = "^[0-9]{10}$", message = "Phone must be 10 digits")
+    @Pattern(regexp = "^$|^[0-9]{10}$", message = "Phone must be 10 digits")
     private String phone;
 
     private String address;
@@ -52,14 +53,14 @@ public class TenantDTO extends BaseDTO {
     @Size(max = 100, message = "State must not exceed 100 characters")
     private String state;
 
-    @Pattern(regexp = "^[0-9]{6}$", message = "Pincode must be 6 digits")
+    @Pattern(regexp = "^$|^[0-9]{6}$", message = "Pincode must be 6 digits")
     private String pincode;
 
-    @Pattern(regexp = "^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$",
+    @Pattern(regexp = "^$|^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$",
              message = "Invalid GSTIN format (e.g., 27AABCT1332L1Z5)")
     private String gstin;
 
-    @Pattern(regexp = "^[A-Z]{5}[0-9]{4}[A-Z]{1}$",
+    @Pattern(regexp = "^$|^[A-Z]{5}[0-9]{4}[A-Z]{1}$",
              message = "Invalid PAN format (e.g., AABCT1332L)")
     private String pan;
 

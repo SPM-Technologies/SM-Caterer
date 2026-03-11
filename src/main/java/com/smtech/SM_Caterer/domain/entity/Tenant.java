@@ -194,7 +194,18 @@ public class Tenant extends BaseEntity {
         return emailEnabled != null && emailEnabled
             && smtpHost != null && !smtpHost.isBlank()
             && smtpPort != null
-            && smtpFromEmail != null && !smtpFromEmail.isBlank();
+            && smtpUsername != null && !smtpUsername.isBlank();
+    }
+
+    /**
+     * Returns the effective from email (falls back to smtpUsername).
+     */
+    @Transient
+    public String getEffectiveFromEmail() {
+        if (smtpFromEmail != null && !smtpFromEmail.isBlank()) {
+            return smtpFromEmail;
+        }
+        return smtpUsername;
     }
 
     /**

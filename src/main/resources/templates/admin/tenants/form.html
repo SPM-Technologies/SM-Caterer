@@ -63,6 +63,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="phone" class="form-label" th:text="#{admin.tenants.phone}">Phone</label>
                         <input type="text" class="form-control" id="phone" th:field="*{phone}">
+                        <div th:if="${#fields.hasErrors('phone')}" class="text-danger" th:errors="*{phone}"></div>
                     </div>
 
                     <!-- Status -->
@@ -95,12 +96,14 @@
                     <div class="col-md-4 mb-3">
                         <label for="pincode" class="form-label" th:text="#{admin.tenants.pincode}">Pincode</label>
                         <input type="text" class="form-control" id="pincode" th:field="*{pincode}">
+                        <div th:if="${#fields.hasErrors('pincode')}" class="text-danger" th:errors="*{pincode}"></div>
                     </div>
 
                     <!-- GSTIN -->
                     <div class="col-md-6 mb-3">
                         <label for="gstin" class="form-label" th:text="#{admin.tenants.gstin}">GSTIN</label>
                         <input type="text" class="form-control" id="gstin" th:field="*{gstin}">
+                        <div th:if="${#fields.hasErrors('gstin')}" class="text-danger" th:errors="*{gstin}"></div>
                     </div>
 
                     <!-- Subscription Start Date -->

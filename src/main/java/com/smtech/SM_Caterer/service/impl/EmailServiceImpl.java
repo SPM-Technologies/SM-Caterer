@@ -71,7 +71,8 @@ public class EmailServiceImpl implements EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            helper.setFrom(tenant.getSmtpFromEmail(), tenant.getSmtpFromName());
+            helper.setFrom(tenant.getEffectiveFromEmail(),
+                    tenant.getSmtpFromName() != null ? tenant.getSmtpFromName() : tenant.getBusinessName());
             helper.setTo(toEmail);
             helper.setSubject("Test Email from " + tenant.getBusinessName());
             helper.setText(buildTestEmailBody(tenant), true);
@@ -86,7 +87,8 @@ public class EmailServiceImpl implements EmailService {
             return true;
 
         } catch (Exception e) {
-            log.error("Failed to send test email to {}: {}", toEmail, e.getMessage());
+            log.error("Failed to send test email to {}: {} ({})", toEmail, e.getMessage(),
+                    e.getCause() != null ? e.getCause().getMessage() : "no cause");
             createEmailLog(tenant, EmailType.TEST_EMAIL, toEmail, null,
                     "Test Email from " + tenant.getBusinessName(), null, null, EmailStatus.FAILED);
             return false;
@@ -118,7 +120,8 @@ public class EmailServiceImpl implements EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            helper.setFrom(tenant.getSmtpFromEmail(), tenant.getSmtpFromName());
+            helper.setFrom(tenant.getEffectiveFromEmail(),
+                    tenant.getSmtpFromName() != null ? tenant.getSmtpFromName() : tenant.getBusinessName());
             helper.setTo(toEmail);
             helper.setSubject(subject);
             helper.setText(buildOrderConfirmationBody(order, tenant), true);
@@ -163,7 +166,8 @@ public class EmailServiceImpl implements EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            helper.setFrom(tenant.getSmtpFromEmail(), tenant.getSmtpFromName());
+            helper.setFrom(tenant.getEffectiveFromEmail(),
+                    tenant.getSmtpFromName() != null ? tenant.getSmtpFromName() : tenant.getBusinessName());
             helper.setTo(toEmail);
             helper.setSubject(subject);
             helper.setText(buildPaymentReceiptBody(payment, tenant), true);
