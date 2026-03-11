@@ -63,7 +63,7 @@ public class Tenant extends BaseEntity {
     private String email;
 
     @Column(name = "phone", length = 20)
-    @Pattern(regexp = "^[0-9]{10}$", message = "Phone must be 10 digits")
+    @Pattern(regexp = "^$|^[0-9]{10}$", message = "Phone must be 10 digits")
     private String phone;
 
     @Column(name = "address", columnDefinition = "TEXT")
@@ -78,16 +78,16 @@ public class Tenant extends BaseEntity {
     private String state;
 
     @Column(name = "pincode", length = 10)
-    @Pattern(regexp = "^[0-9]{6}$", message = "Pincode must be 6 digits")
+    @Pattern(regexp = "^$|^[0-9]{6}$", message = "Pincode must be 6 digits")
     private String pincode;
 
     @Column(name = "gstin", length = 20)
-    @Pattern(regexp = "^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$",
+    @Pattern(regexp = "^$|^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$",
              message = "Invalid GSTIN format")
     private String gstin;
 
     @Column(name = "pan", length = 10)
-    @Pattern(regexp = "^[A-Z]{5}[0-9]{4}[A-Z]{1}$",
+    @Pattern(regexp = "^$|^[A-Z]{5}[0-9]{4}[A-Z]{1}$",
              message = "Invalid PAN format")
     private String pan;
 
@@ -119,7 +119,7 @@ public class Tenant extends BaseEntity {
     private String tagline;
 
     @Column(name = "primary_color", length = 7)
-    @Pattern(regexp = "^#[0-9A-Fa-f]{6}$", message = "Primary color must be a valid hex color (e.g., #3498db)")
+    @Pattern(regexp = "^$|^#[0-9A-Fa-f]{6}$", message = "Primary color must be a valid hex color (e.g., #3498db)")
     private String primaryColor;
 
     // ========================================
